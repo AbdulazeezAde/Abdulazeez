@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>Portfolio Details - iPortfolio Bootstrap Template</title>
+  <title>Abdulazeez Adedayo</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
@@ -48,16 +48,16 @@
     <div class="social-links text-center">
       <a href="https://x.com/hadehdhayor/" class="twitter"><i class="bi bi-twitter-x"></i></a>
       <a href="https://www.github.com/AbdulazeezAde/" class="github"><i class="bi bi-github"></i></a>
-      <a href="https://www.http://medium.com/@abdulazeezanalytics/" class="medium"><i class="bi bi-medium"></i></a>
-      <a href="https://www.linkedin.com/in/abdulazeez-adedayo" class="linkedin"><i class="bi bi-linkedin"></i></a>
+      <a href="https://medium.com/@abdulazeezanalytics/" class="medium"><i class="bi bi-medium"></i></a>
+      <a href="https://linkedin.com/in/abdulazeezadedayo/" class="linkedin"><i class="bi bi-linkedin"></i></a>
     </div>
 
     <nav id="navmenu" class="navmenu">
       <ul>
-        <li><a href="#hero"><i class="bi bi-house navicon"></i>Home</a></li>
-        <li><a href="#about"><i class="bi bi-person navicon"></i> About</a></li>
-        <li><a href="#resume"><i class="bi bi-file-earmark-text navicon"></i> Resume</a></li>
-        <li><a href="#portfolio"><i class="bi bi-images navicon"></i> Portfolio</a></li>
+        <li><a href="index.html"><i class="bi bi-house navicon"></i>Home</a></li>
+        <li><a href="index.html"><i class="bi bi-person navicon"></i> About</a></li>
+        <li><a href="index.html"><i class="bi bi-file-earmark-text navicon"></i> Resume</a></li>
+        <li><a href="index.html"><i class="bi bi-images navicon"></i> Portfolio</a></li>
         <li class="dropdown"><a href="#"><i class="bi bi-menu-button navicon"></i> <span>Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
           <ul>
             <li><a href="#">Dropdown 1</a></li>
@@ -99,44 +99,46 @@
         <div class="row gy-4">
 
           <div class="col-lg-8">
-            <div class="portfolio-details-slider swiper init-swiper">
-
-              <script type="application/json" class="swiper-config">
-                {
-                  "loop": true,
-                  "speed": 600,
-                  "autoplay": {
-                    "delay": 5000
-                  },
-                  "slidesPerView": "auto",
-                  "pagination": {
-                    "el": ".swiper-pagination",
-                    "type": "bullets",
-                    "clickable": true
-                  }
-                }
-              </script>
-
-              <div class="swiper-wrapper align-items-center">
-
-                <div class="swiper-slide">
-                  <img src="assets/img/portfolio/Dashboard 2.png" alt="">
-                </div>
-
-                <div class="swiper-slide">
-                  <img src="assets/img/portfolio/product-1.jpg" alt="">
-                </div>
-
-                <div class="swiper-slide">
-                  <img src="assets/img/portfolio/branding-1.jpg" alt="">
-                </div>
-
-                <div class="swiper-slide">
-                  <img src="assets/img/portfolio/books-1.jpg" alt="">
-                </div>
-
+            <!-- Standalone Project Cards -->
+            <div class="project-card" style="margin-bottom: 40px; padding: 24px; border-radius: 12px; background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,0.04);">
+              <img src="assets/img/portfolio/Dashboard 2.png" alt="Data Analysis Dashboard" style="width:100%; border-radius: 8px; margin-bottom: 16px;">
+              <h3>Data Analysis: SuperStore Regional Dashboard</h3>
+              <p>The regional dashboard provides a visual summary of Superstore sales performance across different regions for the year 2017. It highlights key KPIs such as total sales and profit, along with year-over-year (YoY) changes to track growth. The dashboard also features a breakdown of sub-categories, identifying those with the highest sales in each region, enabling quick insights into top-performing products and areas for strategic focus.</p>
+              <div style="margin-top: 10px;">
+                <a href="https://public.tableau.com/app/profile/abdulazeez.adedayo/viz/SuperStoreRegionalDashboard/Dashboard2" target="_blank" title="View on Tableau" style="margin-right: 12px;"><i class="bi bi-link-45deg"></i></a>
+                <a href="https://medium.com/@abdulazeezanalytics/superstore-dashboard-analysis-article" target="_blank" title="Medium Article" style="margin-right: 12px;"><i class="bi bi-medium"></i></a>
+                <a href="https://github.com/AbdulazeezAde/superstore-dashboard" target="_blank" title="GitHub Repo"><i class="bi bi-github"></i></a>
               </div>
-              <div class="swiper-pagination"></div>
+            </div>
+
+            <div class="project-card" style="margin-bottom: 40px; padding: 24px; border-radius: 12px; background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,0.04);">
+              <img src="assets/img/portfolio/product-1.jpg" alt="ML Project" style="width:100%; border-radius: 8px; margin-bottom: 16px;">
+              <h3>Machine Learning: Product Recommendation System</h3>
+              <p>This project implements a collaborative filtering-based recommendation system for e-commerce products. It leverages user purchase history and product features to suggest relevant products, improving user engagement and sales conversion rates. The model is built using Python and scikit-learn, and results are visualized with interactive dashboards.</p>
+              <div style="margin-top: 10px;">
+                <a href="https://medium.com/@abdulazeezanalytics/product-recommendation-system" target="_blank" title="Medium Article" style="margin-right: 12px;"><i class="bi bi-medium"></i></a>
+                <a href="https://github.com/AbdulazeezAde/product-recommendation-system" target="_blank" title="GitHub Repo"><i class="bi bi-github"></i></a>
+              </div>
+            </div>
+
+            <div class="project-card" style="margin-bottom: 40px; padding: 24px; border-radius: 12px; background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,0.04);">
+              <img src="assets/img/portfolio/branding-1.jpg" alt="Data Science Project" style="width:100%; border-radius: 8px; margin-bottom: 16px;">
+              <h3>Data Science: Customer Segmentation</h3>
+              <p>This project applies unsupervised learning (K-means clustering) to segment customers based on purchasing behavior and demographics. The insights help businesses tailor marketing strategies and improve customer retention. The project includes data preprocessing, feature engineering, and visualization of clusters.</p>
+              <div style="margin-top: 10px;">
+                <a href="https://medium.com/@abdulazeezanalytics/customer-segmentation-data-science" target="_blank" title="Medium Article" style="margin-right: 12px;"><i class="bi bi-medium"></i></a>
+                <a href="https://github.com/AbdulazeezAde/customer-segmentation" target="_blank" title="GitHub Repo"><i class="bi bi-github"></i></a>
+              </div>
+            </div>
+
+            <div class="project-card" style="margin-bottom: 40px; padding: 24px; border-radius: 12px; background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,0.04);">
+              <img src="assets/img/portfolio/chatbot.png" alt="AI Engineering Project" style="width:100%; border-radius: 8px; margin-bottom: 16px;">
+              <h3>AI Engineering: Intelligent Chatbot</h3>
+              <p>This AI-powered chatbot leverages NLP and deep learning to provide instant support and information to users. Built with Python and TensorFlow, it can answer FAQs, handle customer queries, and integrate with business systems. The project demonstrates end-to-end deployment of AI models in production environments.</p>
+              <div style="margin-top: 10px;">
+                <a href="https://medium.com/@abdulazeezanalytics/intelligent-chatbot-ai-engineering" target="_blank" title="Medium Article" style="margin-right: 12px;"><i class="bi bi-medium"></i></a>
+                <a href="https://github.com/AbdulazeezAde/intelligent-chatbot" target="_blank" title="GitHub Repo"><i class="bi bi-github"></i></a>
+              </div>
             </div>
           </div>
 
