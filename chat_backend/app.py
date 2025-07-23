@@ -77,6 +77,7 @@ def chat():
         return jsonify({'error': 'No message provided'}), 400
     answer = ask_gemini(question)
     return jsonify({'answer': answer})
-
+'''
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
+'''
