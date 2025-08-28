@@ -1,5 +1,5 @@
-
 import os
+import json
 from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 from flask_cors import CORS
@@ -10,26 +10,30 @@ from langchain_community.vectorstores import FAISS
 # Load environment variables from .env
 load_dotenv()
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
-RESUME_PATH = os.getenv('RESUME_PATH', 'resume.pdf')
+RESUME_PATH = os.getenv('RESUME_PATH', 'resume.json')
 
 
 app = Flask(__name__)
 CORS(app)
 
+# Load and split resume into chunks for RAG (now from JSON)
 
-# Load and split resume into chunks for RAG
 def load_resume_chunks():
     if os.path.exists(RESUME_PATH):
         try:
-            import PyPDF2
-            with open(RESUME_PATH, 'rb') as f:
-                reader = PyPDF2.PdfReader(f)
-                text = " ".join(page.extract_text() or '' for page in reader.pages)
+            with open(RESUME_PATH, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+                # If the JSON is a dict, join all string values; if it's a list, join all items
+                if isinstance(data, dict):
+                    text = " ".join(str(v) for v in data.values() if isinstance(v, str))
+                elif isinstance(data, list):
+                    text = " ".join(str(item) for item in data if isinstance(item, str))
+                else:
+                    text = str(data)
         except Exception as e:
-            text = f"Error reading PDF: {e}"
+            text = f"Error reading JSON: {e}"
     else:
         text = "Resume not found."
-    # Split into chunks for embedding search
     splitter = RecursiveCharacterTextSplitter(chunk_size=400, chunk_overlap=40)
     return splitter.split_text(text)
 
@@ -77,7 +81,9 @@ def chat():
         return jsonify({'error': 'No message provided'}), 400
     answer = ask_gemini(question)
     return jsonify({'answer': answer})
-'''
+
+"""
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
-'''
+"""
+
