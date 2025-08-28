@@ -1,0 +1,104 @@
+Name: Abdulazeez Adedayo
+Roles: Data Scientist, Machine Learning Engineer, AI Researcher
+Experience: 4+ years
+#Summary
+Passionate and results-driven Data Scientist & ML Engineer with 4+ years of experience in machine learning, data science, and automation. Skilled in building and deploying ML solutions, optimizing processes, and solving real-world problems. Actively engaged in AI research focused on African contexts, including machine translation, speech data, automation etc.
+#Education
+University: Ladoke Akintola University of Technology, Ogbomoso
+Degree: Bachelor’s Degree
+CGPA: 4.36/5.0
+Classification: Second Class Upper Division
+Online Courses:
+Deep Learning Specialization (Coursera, 2019)
+SQL Courses (Coursera, 2022)
+Excel Courses (Coursera, 2022)
+Google Data Analytics Professional Certificate (Coursera, 2022)
+#Work Experience
+Data Scientist – Data Quotient (Dec 2024 – Present, Remote/Onsite)
+Designed and implemented over 100+ JSON schemas for structured data storage and improved data consistency.
+Built and deployed Retrieval-Augmented Generation (RAG) workflows for Leveller, enhancing response accuracy and contextual relevance.
+Automated data collection, reducing manual effort by 50% with a scalable data extraction pipeline.
+Stored processed data securely in Amazon S3 for efficient access and scalability.
+Developed and optimized machine learning models to analyze, predict, and visualize data insights.
+
+Data Scientist – Emergency Communications Centre (Nov 2022 – Nov 2024, Lagos)
+Designed and implemented a MySQL database to manage 1M+ call records, improving accessibility and efficiency.
+Analyzed weekly call trends, reducing abandoned calls by 10%.
+Introduced AI-driven automation for classifying and prioritizing emergency calls, improving response time.
+Built real-time dashboards and reports that improved decision-making and boosted emergency response efficiency by 15%.
+
+Research & Projects
+1. Yoruba Machine Translation: Improving robustness for Egba, Akoko, and Offa dialects using MENYO-20k and YorùLect.
+2. Leveller RAG Workflow: Built RAG pipeline using LangChain, PineCone, and OpenAI to enhance contextual accuracy.
+3. Speech datasets for English–Yoruba MT with focus on Yoruba accents.
+4. Food recommendation system using African food datasets.
+5. DeepEyeNet: Deep learning model for eye disease classification.
+6. CUDA workflows for ML model optimization in Python.
+7. Transformer implementation from scratch (Attention Is All You Need), deployed on Hugging Face Hub.
+
+Professional Impact
+Deployed ML models into production environments serving thousands of real-world users.
+Improved operational efficiency by reducing manual processes up to 50% through automation and intelligent pipelines.
+Built scalable data pipelines handling 1M+ records with cloud-based storage and retrieval (AWS S3, MySQL).
+Delivered insights that contributed to 10–15% improvement in organizational KPIs (e.g., emergency response times, customer engagement).
+
+Research & Innovation
+Currently preparing a poster on Machine Translation Robustness for Underrepresented Yoruba Dialects (Egba, Akoko, Offa variants).
+Currently Contributing to Masakhane and other open-source African NLP projects focused on low-resource languages.
+Collected and curated African food and speech datasets for open research use.
+Explored CUDA workflows for accelerating deep learning model training in Python.
+
+Community & Leadership
+Active volunteer with AI Saturdays Lagos, DSN Osogbo, AI+ Lautech, Data Science Africa, Masakhane, and Black in AI.
+Mentored and tutored community members in data science, machine learning, and AI tools.
+Presented/attended major AI events: Deep Learning Indaba (Rwanda 2025), IndabaX Nigeria 2025, DSN Bootcamps (2020 & 2024).
+
+Skills Edge
+Strong expertise in LLMs and RAG pipelines (LangChain, Pinecone, OpenAI integrations).
+Experience in MLOps and deployment using FastAPI, Docker, and cloud storage.
+Skilled in data visualization and storytelling (Tableau, Power BI, Matplotlib, Plotly).
+Worked with advanced machine learning techniques: clustering, regression, NLP, computer vision.
+
+Recognition & Awards
+Recipient of travel grants/funding to attend international AI conferences (e.g., Indaba, DSN Bootcamp).
+Recognized contributor in African AI/NLP open-source collaborations.
+
+Personal Edge
+Passionate about solving African-local problems with ML, including healthcare, finance, and language translation.
+Enthusiast of computer hardware tinkering and using programming for creative problem-solving.
+Dedicated to knowledge-sharing through blog posts (Medium) and open repositories (GitHub).
+
+Community Involvement and volunteering experience
+AI Saturdays Lagos
+DSN Osogbo
+AI+ Lautech
+Data Science Africa
+Masakhane
+Black in AI
+GDG Ikorodu
+
+Content Creation
+Platforms: LinkedIn, Medium, Twitter, TikTok
+Project: 365-day deep learning learning journey
+GitHub: github.com/AbdulazeezAde
+Medium: medium.com/@abdulazeezanalytics
+
+Technical Skills
+Programming & ML: Python, SQL, PyTorch, TensorFlow, Keras, FastAPI, Flask
+Libraries & Tools: Pandas, NumPy, Scikit-Learn, Matplotlib, Plotly, Seaborn, NLTK
+Databases & Querying: MySQL, Google BigQuery, MS Access
+Data Visualization: Tableau, Power BI, R
+Deployment & Automation: FastAPI, Flask, Jira, MS Project
+Cloud & Storage: Amazon S3, GCP, Microsoft Azure
+Other Tools: Advanced Excel, Microsoft Office Suite
+
+Conferences & Bootcamps
+DSN Bootcamp (2020, 2024)
+IndabaX Nigeria (2025)
+Deep Learning Indaba (2025, Kigali, Rwanda)
+
+Motivation & Goals
+Publish research at ICML, CVPR, and Black in AI in 2025.
+Solve African problems in healthcare, education, finance, and language technology.
+Expand open-source African datasets for global researchers.
+Contribute to AI education and community growth in Africa.
