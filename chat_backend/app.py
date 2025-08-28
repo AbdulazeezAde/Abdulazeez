@@ -10,7 +10,7 @@ from langchain_community.vectorstores import FAISS
 # Load environment variables from .env
 load_dotenv()
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
-RESUME_PATH = os.getenv('RESUME_PATH', 'resume.json')
+RESUME_PATH = os.getenv('RESUME_PATH', 'resume.txt')
 
 
 app = Flask(__name__)
@@ -22,16 +22,9 @@ def load_resume_chunks():
     if os.path.exists(RESUME_PATH):
         try:
             with open(RESUME_PATH, 'r', encoding='utf-8') as f:
-                data = json.load(f)
-                # If the JSON is a dict, join all string values; if it's a list, join all items
-                if isinstance(data, dict):
-                    text = " ".join(str(v) for v in data.values() if isinstance(v, str))
-                elif isinstance(data, list):
-                    text = " ".join(str(item) for item in data if isinstance(item, str))
-                else:
-                    text = str(data)
+                text = f.read()
         except Exception as e:
-            text = f"Error reading JSON: {e}"
+            text = f"Error reading TXT: {e}"
     else:
         text = "Resume not found."
     splitter = RecursiveCharacterTextSplitter(chunk_size=400, chunk_overlap=40)
