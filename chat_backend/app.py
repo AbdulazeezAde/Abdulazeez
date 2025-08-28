@@ -72,6 +72,9 @@ def ask_gemini(question):
     except Exception as e:
         return f"Error with Gemini API: {e}"
 
+@app.route('/', methods=['GET'])
+def home():
+    return "Abdulazeez Chat API is running." , 200
 
 @app.route('/chat', methods=['POST'])
 def chat():
