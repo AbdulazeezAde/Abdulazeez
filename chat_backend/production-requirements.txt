@@ -1,6 +1,5 @@
 flask
 dotenv
-PyPDF2
 google-generativeai
 waitress
 langchain
