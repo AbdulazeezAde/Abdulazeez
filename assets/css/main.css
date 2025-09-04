@@ -87,6 +87,24 @@ h6 {
   font-family: var(--heading-font);
 }
 
+
+/* Jitter (shake) animation for chat button */
+@keyframes shake {
+  0% { transform: translate(0, 0); }
+  15% { transform: translate(-3px, 0); }
+  30% { transform: translate(3px, 0); }
+  45% { transform: translate(-3px, 0); }
+  60% { transform: translate(3px, 0); }
+  75% { transform: translate(-2px, 0); }
+  100% { transform: translate(0, 0); }
+}
+
+.jitter {
+  animation: shake 0.7s cubic-bezier(.36,.07,.19,.97) both;
+  animation-iteration-count: 3;
+}
+
+/*
 /* PHP Email Form Messages
 ------------------------------*/
 .php-email-form .error-message {
