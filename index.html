@@ -53,7 +53,7 @@
 
     <nav id="navmenu" class="navmenu">
       <ul>
-        <li><a href="#hero" class="active"><i class="bi bi-house navicon"></i>Home</a></li>
+        <li><a href="#home" class="active"><i class="bi bi-house navicon"></i>Home</a></li>
         <li><a href="#about"><i class="bi bi-person navicon"></i> About</a></li>
         <li><a href="#resume"><i class="bi bi-file-earmark-text navicon"></i> Resume</a></li>
         <li><a href="#portfolio"><i class="bi bi-images navicon"></i> Portfolio</a></li>
@@ -66,8 +66,8 @@
 
   <main class="main">
 
-    <!-- Hero Section -->
-    <section id="hero" class="hero section dark-background">
+    <!-- home Section -->
+    <section id="home" class="hero section dark-background">
 
       <img src="assets/img/myimg.jpg" alt="" data-aos="fade-in" class="">
 
@@ -617,6 +617,15 @@ document.getElementById('close-chat-pdf').addEventListener('keydown', function(e
 const chatForm = document.getElementById('chat-pdf-form');
 const chatInput = document.getElementById('chat-pdf-input');
 const chatMessages = document.getElementById('chat-pdf-messages');
+
+setInterval(() => {
+  const btn = document.getElementById('chat-pdf-btn');
+  btn.classList.remove('jitter');
+  // Force reflow to restart animation
+  void btn.offsetWidth;
+  btn.classList.add('jitter');
+}, 5000);
+
 
 function appendMessage(sender, text) {
   const msg = document.createElement('div');
