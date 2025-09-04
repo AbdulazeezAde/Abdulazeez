@@ -1,7 +1,6 @@
 flask
 flask-cors
 dotenv
-PyPDF2
 google-generativeai
 waitress
 langchain
