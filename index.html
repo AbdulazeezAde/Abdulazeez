@@ -352,57 +352,145 @@ improvements that increased customer satisfaction scores by 25%. </li>
       </div><!-- End Section Title -->
 
       <div class="container">
-
+        <style>
+          /* Portfolio card optimization */
+          .project-card {
+            min-height: 520px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            padding: 24px;
+            border-radius: 12px;
+            background: #fff;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+            transition: box-shadow 0.2s;
+          }
+          .project-card:hover {
+            box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+          }
+          .project-card img {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: transform 0.2s;
+          }
+          .project-card img:hover {
+            transform: scale(1.03);
+          }
+          .project-card .card-links {
+            margin-top: 10px;
+            display: flex;
+            gap: 12px;
+          }
+          .project-card .card-links a {
+            font-size: 20px;
+            color: #007bff;
+            transition: color 0.2s;
+          }
+          .project-card .card-links a:hover {
+            color: #0056b3;
+          }
+          .project-card .read-more-btn {
+            margin-top: 18px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-decoration: none;
+            display: inline-block;
+          }
+          .project-card .read-more-btn:hover {
+            background: #0056b3;
+          }
+          /* Responsive equal height */
+          @media (min-width: 992px) {
+            .portfolio .row.gy-4 {
+              display: flex;
+              flex-wrap: wrap;
+            }
+            .portfolio .col-lg-6 {
+              display: flex;
+            }
+            .project-card {
+              flex: 1 1 0;
+              height: 100%;
+            }
+          }
+        </style>
         <div class="row gy-4" data-aos="fade-up" data-aos-delay="200">
+          <!-- SuperStore Regional Dashboard -->
           <div class="col-lg-6">
-            <div class="project-card" style="margin-bottom: 40px; padding: 24px; border-radius: 12px; background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,0.04);">
-              <img src="assets/img/portfolio/Dashboard 2.png" alt="SuperStore Regional Dashboard screenshot" style="width:100%; border-radius: 8px; margin-bottom: 16px;" loading="lazy">
+            <div class="project-card">
+              <a href="https://public.tableau.com/app/profile/abdulazeez.adedayo/viz/SuperStoreRegionalDashboard/Dashboard2" target="_blank" title="View Live Demo">
+                <img src="assets/img/portfolio/Dashboard 2.png" alt="SuperStore Regional Dashboard screenshot" loading="lazy">
+              </a>
               <h3>Data Analysis: SuperStore Regional Dashboard</h3>
               <p>The regional dashboard provides a visual summary of Superstore sales performance across different regions for the year 2017. It highlights key KPIs such as total sales and profit, along with year-over-year (YoY) changes to track growth. The dashboard also features a breakdown of sub-categories, identifying those with the highest sales in each region, enabling quick insights into top-performing products and areas for strategic focus.</p>
-              <div style="margin-top: 10px;">
-                <a href="https://public.tableau.com/app/profile/abdulazeez.adedayo/viz/SuperStoreRegionalDashboard/Dashboard2" target="_blank" title="View on Tableau" style="margin-right: 12px;"><i class="bi bi-link-45deg"></i></a>
-                <a href="https://medium.com/@abdulazeezanalytics/superstore-dashboard-analysis-article" target="_blank" title="Medium Article" style="margin-right: 12px;"><i class="bi bi-medium"></i></a>
+              <div class="card-links">
+                <a href="https://medium.com/@abdulazeezanalytics/superstore-dashboard-analysis-article" target="_blank" title="Medium Article"><i class="bi bi-medium"></i></a>
                 <a href="https://github.com/AbdulazeezAde/superstore-dashboard" target="_blank" title="GitHub Repo"><i class="bi bi-github"></i></a>
+                <a href="https://public.tableau.com/app/profile/abdulazeez.adedayo/viz/SuperStoreRegionalDashboard/Dashboard2" target="_blank" title="View Live Demo"><i class="bi bi-box-arrow-up-right"></i></a>
               </div>
+              <a class="read-more-btn" href="https://public.tableau.com/app/profile/abdulazeez.adedayo/viz/SuperStoreRegionalDashboard/Dashboard2" target="_blank">Read More</a>
             </div>
           </div>
+          <!-- Product Recommendation System -->
           <div class="col-lg-6">
-            <div class="project-card" style="margin-bottom: 40px; padding: 24px; border-radius: 12px; background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,0.04);">
-              <img src="assets/img/portfolio/product-1.jpg" alt="Product Recommendation System screenshot" style="width:100%; border-radius: 8px; margin-bottom: 16px;" loading="lazy">
-              <h3>Machine Learning: Product Recommendation System</h3>
-              <p>This project implements a collaborative filtering-based recommendation system for e-commerce products. It leverages user purchase history and product features to suggest relevant products, improving user engagement and sales conversion rates. The model is built using Python and scikit-learn, and results are visualized with interactive dashboards.</p>
-              <div style="margin-top: 10px;">
-                <a href="https://medium.com/@abdulazeezanalytics/product-recommendation-system" target="_blank" title="Medium Article" style="margin-right: 12px;"><i class="bi bi-medium"></i></a>
-                <a href="https://github.com/AbdulazeezAde/product-recommendation-system" target="_blank" title="GitHub Repo"><i class="bi bi-github"></i></a>
+            <div class="project-card">
+              <a href="https://github.com/AbdulazeezAde/product-recommendation-system" target="_blank" title="View Live Demo">
+                <img src="assets/img/portfolio/forecasting.jpeg" alt="Product Recommendation System screenshot" loading="lazy">
+              </a>
+              <h3>Machine Learning: Retail Demand Forecasting</h3>
+              <p>A comprehensive time-series ML system that forecasts weekly and monthly product demand across multiple SKUs. Built with Random Forest and 20+ engineered features (lags, rolling stats, seasonality, promotions, regional trends), it delivers accurate, uncertainty-aware predictions. The solution includes an interactive Streamlit dashboard for visualization, scenario testing, and CSV export, supporting inventory optimization, marketing planning, and supply chain decisions.</p>
+              <div class="card-links">
+                <a href="https://medium.com/@abdulazeezanalytics/product-recommendation-system" target="_blank" title="Medium Article"><i class="bi bi-medium"></i></a>
+                <a href="https://github.com/AbdulazeezAde/retail-demand-forecasting" target="_blank" title="GitHub Repo"><i class="bi bi-github"></i></a>
+                <a href="https://retail-demand-forecasting.streamlit.app/" target="_blank" title="View Live Demo"><i class="bi bi-box-arrow-up-right"></i></a>
               </div>
+              <a class="read-more-btn" href="https://github.com/AbdulazeezAde/product-recommendation-system" target="_blank">Read More</a>
             </div>
           </div>
+          <!-- Customer Segmentation -->
           <div class="col-lg-6">
-            <div class="project-card" style="margin-bottom: 40px; padding: 24px; border-radius: 12px; background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,0.04);">
-              <img src="assets/img/portfolio/branding-1.jpg" alt="Customer Segmentation screenshot" style="width:100%; border-radius: 8px; margin-bottom: 16px;" loading="lazy">
+            <div class="project-card">
+              <a href="https://github.com/AbdulazeezAde/customer-segmentation" target="_blank" title="View Live Demo">
+                <img src="assets/img/portfolio/branding-1.jpg" alt="Customer Segmentation screenshot" loading="lazy">
+              </a>
               <h3>Data Science: Customer Segmentation</h3>
               <p>This project applies unsupervised learning (K-means clustering) to segment customers based on purchasing behavior and demographics. The insights help businesses tailor marketing strategies and improve customer retention. The project includes data preprocessing, feature engineering, and visualization of clusters.</p>
-              <div style="margin-top: 10px;">
-                <a href="https://medium.com/@abdulazeezanalytics/customer-segmentation-data-science" target="_blank" title="Medium Article" style="margin-right: 12px;"><i class="bi bi-medium"></i></a>
+              <div class="card-links">
+                <a href="https://medium.com/@abdulazeezanalytics/customer-segmentation-data-science" target="_blank" title="Medium Article"><i class="bi bi-medium"></i></a>
                 <a href="https://github.com/AbdulazeezAde/customer-segmentation" target="_blank" title="GitHub Repo"><i class="bi bi-github"></i></a>
+                <a href="https://github.com/AbdulazeezAde/customer-segmentation" target="_blank" title="View Live Demo"><i class="bi bi-box-arrow-up-right"></i></a>
               </div>
+              <a class="read-more-btn" href="https://github.com/AbdulazeezAde/customer-segmentation" target="_blank">Read More</a>
             </div>
           </div>
+          <!-- Intelligent Chatbot -->
           <div class="col-lg-6">
-            <div class="project-card" style="margin-bottom: 40px; padding: 24px; border-radius: 12px; background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,0.04);">
-              <img src="assets/img/portfolio/chatbot.png" alt="Intelligent Chatbot screenshot" style="width:100%; border-radius: 8px; margin-bottom: 16px;" loading="lazy">
-              <h3>AI Engineering: Intelligent Chatbot</h3>
-              <p>This AI-powered chatbot leverages NLP and deep learning to provide instant support and information to users. Built with Python and TensorFlow, it can answer FAQs, handle customer queries, and integrate with business systems. The project demonstrates end-to-end deployment of AI models in production environments.</p>
-              <div style="margin-top: 10px;">
-                <a href="https://medium.com/@abdulazeezanalytics/intelligent-chatbot-ai-engineering" target="_blank" title="Medium Article" style="margin-right: 12px;"><i class="bi bi-medium"></i></a>
-                <a href="https://github.com/AbdulazeezAde/intelligent-chatbot" target="_blank" title="GitHub Repo"><i class="bi bi-github"></i></a>
+            <div class="project-card">
+              <a href="https://github.com/AbdulazeezAde/intelligent-chatbot" target="_blank" title="View Live Demo">
+                <img src="assets/img/portfolio/chatbot.png" alt="Intelligent Chatbot screenshot" loading="lazy">
+              </a>
+              <h3>AI Engineering: Customer Support Chatbot</h3>
+              <p>The Simulated (Paystack) Customer Support RAG Chatbot is an AI-driven system that provides contextual, accurate, and human-like responses by combining large language models with retrieval-augmented generation (RAG). It integrates company FAQs, manuals into a vector database (Pinecone), FAISS(for similarity search) for fast and relevant information retrieval. Latency was optimized with caching, selective retrieval, and async pipelines, ensuring near real-time responses, while cost was reduced by minimizing token usage through compact prompts. The system was deployed with a Streamlit interface for simulation and FastAPI endpoints for integration into production workflows. This project demonstrates practical applications of RAG for customer service, internal helpdesks, and enterprise AI adoption.</p>
+              <div class="card-links">
+                <a href="https://medium.com/@abdulazeezanalytics/intelligent-chatbot-ai-engineering" target="_blank" title="Medium Article"><i class="bi bi-medium"></i></a>
+                <a href="https://github.com/AbdulazeezAde/customer-support-bot" target="_blank" title="GitHub Repo"><i class="bi bi-github"></i></a>
+                <a href="https://customer-support-bot-app.streamlit.app/" target="_blank" title="View Live Demo"><i class="bi bi-box-arrow-up-right"></i></a>
               </div>
+              <a class="read-more-btn" href="https://github.com/AbdulazeezAde/intelligent-chatbot" target="_blank">Read More</a>
             </div>
           </div>
         </div>
-
       </div>
-
     </section><!-- /Portfolio Section -->
     <!-- Insights & Blog Section -->
     <section id="insights" class="insights section light-background">
@@ -414,15 +502,15 @@ improvements that increased customer satisfaction scores by 25%. </li>
         <div class="row gy-4">
           <div class="col-lg-6">
             <div class="blog-card" style="background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); padding: 24px; margin-bottom: 32px;">
-              <h3 style="color:#007bff; font-weight:600;">5 Essential Data Science Tips for Beginners</h3>
-              <p>Kickstart your data science journey with these practical tips: focus on data cleaning, learn SQL, master visualization, build projects, and stay curious. <a href="https://medium.com/@abdulazeezanalytics/essential-data-science-tips" target="_blank">Read more</a></p>
+              <h3 style="color:#007bff; font-weight:600;">Don't Learn Data Analytics in 30 Days</h3>
+              <p>Kickstart your data analytics journey with these practical tips: focus on data cleaning, learn SQL, master visualization, build projects, and stay curious. <a href="https://abdulazeezanalytics.medium.com/dont-learn-data-analytics-in-30-days-b298130d359b?source=user_profile_page---------4-------------47c885d7b7e4----------------------" target="_blank">Read more</a></p>
               <span style="font-size:13px; color:#888;">Published: July 2025</span>
             </div>
           </div>
           <div class="col-lg-6">
             <div class="blog-card" style="background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); padding: 24px; margin-bottom: 32px;">
-              <h3 style="color:#007bff; font-weight:600;">Project Retrospective: Building a Product Recommendation System</h3>
-              <p>Lessons learned from developing a collaborative filtering-based recommender: data preprocessing, model selection, and deployment challenges. <a href="https://medium.com/@abdulazeezanalytics/product-recommendation-system" target="_blank">Read more</a></p>
+              <h3 style="color:#007bff; font-weight:600;">A Guide to Data Literacy in Business</h3>
+              <p>A Guide to Data Literacy in Business empowers teams to understand, interpret, and communicate data effectively, bridging the gap between raw numbers and strategic decision-making.<a href="https://abdulazeezanalytics.medium.com/a-guide-to-data-literacy-in-businesses-f25ba8a3adac?source=user_profile_page---------6-------------47c885d7b7e4----------------------" target="_blank">Read more</a></p>
               <span style="font-size:13px; color:#888;">Published: June 2025</span>
             </div>
           </div>
