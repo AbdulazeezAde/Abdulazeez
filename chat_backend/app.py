@@ -52,7 +52,7 @@ def ask_gemini(question):
         rag_context = "\n---\n".join([d.page_content for d in docs])
         import google.generativeai as genai
         genai.configure(api_key=GEMINI_API_KEY)
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        model = genai.GenerativeModel('gemini-2.5-flash')
         prompt = (
             "You are an assistant with access to details about me. Don't mention the resume. "
             "Answer the following question based ONLY on the provided context. "
