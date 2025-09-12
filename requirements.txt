@@ -9,6 +9,5 @@ langchain-community
 gunicorn
 faiss-cpu
 python-dotenv
-sentence-transformers
 faiss-cpu
 
