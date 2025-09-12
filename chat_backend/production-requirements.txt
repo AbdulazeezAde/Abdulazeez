@@ -5,3 +5,7 @@ waitress
 langchain
 langchain-google-genai
 langchain-community
+flask-cors
+python-dotenv
+sentence-transformers
+faiss-cpu
