@@ -91,7 +91,7 @@ def ask_gemini_with_context(question: str, context: str):
     try:
         # try to generate content using Gemini SDK (same as earlier)
         genai.configure(api_key=GEMINI_API_KEY)
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = genai.GenerativeModel("gemini-2.5-flash-lite")
         prompt = (
             "You are an assistant with access to details about me. Don't mention the resume. "
             "Answer the following question based ONLY on the provided context. "
