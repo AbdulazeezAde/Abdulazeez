@@ -13,13 +13,8 @@ from sentence_transformers import SentenceTransformer
 load_dotenv()
 
 # Multiple API keys - add your keys here
-GEMINI_API_KEYS = [
-    os.getenv('GEMINI_API_KEY'),
-    os.getenv('GEMINI_API_KEY_2'),
-    os.getenv('GEMINI_API_KEY_3'),
-]
+GEMINI_API_KEY =  os.getenv('GEMINI_API_KEY')
 
-GEMINI_API_KEYS = [key for key in GEMINI_API_KEYS if key]
 RESUME_PATH = os.getenv('RESUME_PATH', 'resume.txt')
 current_key_index = 0
 
