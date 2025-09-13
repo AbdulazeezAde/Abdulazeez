@@ -11,11 +11,13 @@ import google.generativeai as genai
 # === Config (set these on Render) ===
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
 HF_API_KEY = os.getenv("HF_API_KEY", "")
-HF_MODEL = os.getenv("HF_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
 
 FAISS_INDEX_PATH = os.getenv("FAISS_INDEX_PATH", "faiss_index.index")
 TEXTS_PKL_PATH = os.getenv("TEXTS_PKL_PATH", "texts.pkl")
 TOP_K = int(os.getenv("TOP_K", "3"))
+
+# Hugging Face embedding model (hardcoded)
+HF_MODEL = "sentence-transformers/all-MiniLM-L6-v2"
 
 app = Flask(__name__)
 CORS(app)
@@ -23,6 +25,7 @@ CORS(app)
 # === Globals ===
 INDEX = None
 TEXTS = []
+EMBEDDING_CACHE = {}  # <--- in-memory cache
 
 # === Load FAISS index & texts at startup ===
 def load_index_and_texts():
@@ -42,9 +45,12 @@ def load_index_and_texts():
 
 load_index_and_texts()
 
-# === Hugging Face Embeddings ===
+# === Hugging Face Embeddings with Cache ===
 def get_hf_embedding(text: str):
-    """Call Hugging Face Inference API for embeddings"""
+    """Call Hugging Face Inference API for embeddings, with caching"""
+    if text in EMBEDDING_CACHE:
+        return EMBEDDING_CACHE[text]
+
     if not HF_API_KEY:
         raise Exception("HF_API_KEY not set in environment.")
 
@@ -56,9 +62,10 @@ def get_hf_embedding(text: str):
         raise Exception(f"HuggingFace API error: {response.status_code} {response.text}")
 
     embedding = response.json()
-    # Flatten nested list
     if isinstance(embedding, list) and isinstance(embedding[0], list):
-        return embedding[0]
+        embedding = embedding[0]
+
+    EMBEDDING_CACHE[text] = embedding
     return embedding
 
 def normalize(v: np.ndarray):
