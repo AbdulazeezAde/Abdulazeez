@@ -4,36 +4,51 @@ import numpy as np
 from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 from flask_cors import CORS
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.vectorstores import FAISS
-from langchain.embeddings.base import Embeddings
-from sentence_transformers import SentenceTransformer
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+import pickle
 
 # Load environment variables from .env
 load_dotenv()
 
-# Multiple API keys - add your keys here
-GEMINI_API_KEY =  os.getenv('GEMINI_API_KEY')
-
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 RESUME_PATH = os.getenv('RESUME_PATH', 'resume.txt')
-current_key_index = 0
 
 app = Flask(__name__)
 CORS(app)
 
-# Custom embedding class for sentence-transformers
-class SentenceTransformerEmbeddings(Embeddings):
-    def __init__(self, model_name="all-MiniLM-L6-v2"):
-        # This model is only ~80MB and very fast
-        self.model = SentenceTransformer(model_name)
+class SimpleTfidfEmbeddings:
+    def __init__(self):
+        self.vectorizer = TfidfVectorizer(max_features=1000, stop_words='english')
+        self.chunks = []
+        self.vectors = None
     
-    def embed_documents(self, texts):
-        return self.model.encode(texts).tolist()
+    def fit_transform(self, texts):
+        self.chunks = texts
+        self.vectors = self.vectorizer.fit_transform(texts)
+        return self.vectors
     
-    def embed_query(self, text):
-        return self.model.encode([text])[0].tolist()
+    def similarity_search(self, query, k=3):
+        if self.vectors is None:
+            return []
+        
+        query_vector = self.vectorizer.transform([query])
+        similarities = cosine_similarity(query_vector, self.vectors).flatten()
+        
+        # Get top k indices
+        top_indices = similarities.argsort()[-k:][::-1]
+        
+        results = []
+        for idx in top_indices:
+            if similarities[idx] > 0:  # Only return if there's some similarity
+                results.append({
+                    'page_content': self.chunks[idx],
+                    'score': similarities[idx]
+                })
+        
+        return results
 
-# Load and split resume into chunks for RAG
+# Load and split resume into chunks
 def load_resume_chunks():
     if os.path.exists(RESUME_PATH):
         try:
@@ -44,34 +59,52 @@ def load_resume_chunks():
     else:
         text = "Resume not found."
     
-    splitter = RecursiveCharacterTextSplitter(chunk_size=400, chunk_overlap=40)
-    return splitter.split_text(text)
+    # Simple chunking by sentences/paragraphs
+    chunks = []
+    paragraphs = text.split('\n\n')
+    
+    for para in paragraphs:
+        if len(para.strip()) > 50:  # Only include substantial paragraphs
+            # Split long paragraphs
+            if len(para) > 400:
+                sentences = para.split('. ')
+                current_chunk = ""
+                for sentence in sentences:
+                    if len(current_chunk + sentence) < 400:
+                        current_chunk += sentence + ". "
+                    else:
+                        if current_chunk.strip():
+                            chunks.append(current_chunk.strip())
+                        current_chunk = sentence + ". "
+                if current_chunk.strip():
+                    chunks.append(current_chunk.strip())
+            else:
+                chunks.append(para.strip())
+    
+    return chunks
 
+# Initialize the embedding system
 RESUME_CHUNKS = load_resume_chunks()
+EMBEDDINGS = SimpleTfidfEmbeddings()
 
-# Build vector store for RAG with local embeddings
-def build_vectorstore(chunks):
-    try:
-        embeddings = SentenceTransformerEmbeddings()
-        return FAISS.from_texts(chunks, embeddings)
-    except Exception as e:
-        print(f"Error building vectorstore: {e}")
-        return None
+if RESUME_CHUNKS:
+    EMBEDDINGS.fit_transform(RESUME_CHUNKS)
 
-VECTORSTORE = build_vectorstore(RESUME_CHUNKS) if RESUME_CHUNKS else None
-
-# RAG with LangChain and Gemini
 def ask_gemini(question):
     if not GEMINI_API_KEY:
         return "Gemini API key not set."
     
-    if not VECTORSTORE:
-        return "Vector store not initialized."
+    if not RESUME_CHUNKS:
+        return "Resume not loaded."
     
     try:
-        # Retrieve top 3 relevant chunks
-        docs = VECTORSTORE.similarity_search(question, k=3)
-        rag_context = "\n---\n".join([d.page_content for d in docs])
+        # Get relevant chunks using TF-IDF similarity
+        docs = EMBEDDINGS.similarity_search(question, k=3)
+        
+        if not docs:
+            return "I could not find that information about Abdulazeez."
+        
+        rag_context = "\n---\n".join([d['page_content'] for d in docs])
         
         import google.generativeai as genai
         genai.configure(api_key=GEMINI_API_KEY)
@@ -107,5 +140,6 @@ def chat():
     return jsonify({'answer': answer})
 """
 if __name__ == '__main__':
-    app.run(debug=True, port=5001)
+    port = int(os.environ.get('PORT', 5001))
+    app.run(host='0.0.0.0', port=port, debug=False)
 """
