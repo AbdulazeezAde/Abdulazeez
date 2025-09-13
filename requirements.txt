@@ -5,4 +5,5 @@ gunicorn
 python-dotenv
 google-generativeai
 waitress
-
+numpy
+scikit-learn
