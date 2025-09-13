@@ -4,7 +4,7 @@ import faiss
 import numpy as np
 import requests
 from flask import Flask, request, jsonify
-from google import genai
+import google.generativeai as genai
 from google.genai import types
 
 # ------------------------------
@@ -81,9 +81,7 @@ def chat():
 
         # Gemini for generation
         prompt = f"Use the context below to answer the question:\n\nContext:\n{context_text}\n\nQuestion: {user_input}\n\nAnswer:"
-        response = gemini_client.models.generate_content(
-            model="gemini-1.5-flash", contents=prompt
-        )
+        response = genai.GenerativeModel("gemini-1.5-flash").generate_content(prompt)
 
         reply = response.text.strip()
         return jsonify({"response": reply, "context": context})
