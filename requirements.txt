@@ -10,4 +10,4 @@ gunicorn
 faiss-cpu
 python-dotenv
 faiss-cpu
-
+sentence-transformers
