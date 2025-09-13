@@ -1,13 +1,8 @@
 flask
 flask-cors
 dotenv
+gunicorn
+python-dotenv
 google-generativeai
 waitress
-langchain
-langchain-google-genai
-langchain-community
-gunicorn
-faiss-cpu
-python-dotenv
-faiss-cpu
-sentence-transformers
+
