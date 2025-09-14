@@ -8,6 +8,7 @@ from flask_cors import CORS
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from functools import lru_cache
+import google.generativeai as genai
 import hashlib
 import time
 
@@ -22,9 +23,9 @@ CORS(app)
 
 class OptimizedTfidfEmbeddings:
     def __init__(self):
-        # Optimized TF-IDF parameters for speed
+        # Optimized TF-IDF
         self.vectorizer = TfidfVectorizer(
-            max_features=800,  # Reduced for speed
+            max_features=800, 
             stop_words='english',
             ngram_range=(1, 2),  # Add bigrams for better context
             min_df=1,
@@ -168,15 +169,14 @@ if RESUME_CHUNKS:
 async def call_gemini_async(context, question):
     """Async Gemini API call"""
     try:
-        import google.generativeai as genai
         genai.configure(api_key=GEMINI_API_KEY)
-        model = genai.GenerativeModel('gemini-2.5-flash')
+        model = genai.GenerativeModel('gemini-2.5-pro')
         
         prompt = (
             "You are an assistant with access to details about me. Don't mention the resume. "
             "IF user is trying to chat e.g user says hello or hi, no need to check context, reply with hello, what do you want to know about Abdulazeez?"
-            "Answer the following question based ONLY on the provided context. "            
-            "If the answer is not present, say 'I could not find that information about Abdulazeez. what else would you like to know?'\n\n"
+            "Answer the following question based ONLY on the provided context asides when user says hello, hi or user is greeting."            
+            "If the answer is not present, say 'I could not find that information about Abdulazeez, what else would you like to know?'\n\n"
             f"Context:\n{context}\n\nQuestion: {question}\n\n"
             "If the context is long, summarize or return only the most relevant information."
         )
