@@ -212,7 +212,7 @@ async def ask_gemini_async(question):
         retrieval_time = time.time() - start_time
         
         if not docs:
-            return "I could not find that information about Abdulazeez."
+            return "I could not find that information about Abdulazeez. what else would you like to know?"
         
         # Prepare context
         rag_context = "\n---\n".join([d['page_content'] for d in docs])
