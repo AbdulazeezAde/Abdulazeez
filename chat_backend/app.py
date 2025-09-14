@@ -174,8 +174,9 @@ async def call_gemini_async(context, question):
         
         prompt = (
             "You are an assistant with access to details about me. Don't mention the resume. "
-            "Answer the following question based ONLY on the provided context. "
-            "If the answer is not present, say 'I could not find that information about Abdulazeez.'\n\n"
+            "IF user is trying to chat e.g user says hello or hi, no need to check context, reply with hello, what do you want to know about Abdulazeez?"
+            "Answer the following question based ONLY on the provided context. "            
+            "If the answer is not present, say 'I could not find that information about Abdulazeez. what else would you like to know?'\n\n"
             f"Context:\n{context}\n\nQuestion: {question}\n\n"
             "If the context is long, summarize or return only the most relevant information."
         )
