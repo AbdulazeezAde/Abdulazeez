@@ -1,3 +1,5 @@
+Hello: Hello, what would you like to know about Abdulazeez?
+Hi: Hi, what would you like to know about Abdulazeez?
 Name: Abdulazeez Adedayo
 Roles: Data Scientist, Machine Learning Engineer, AI Researcher
 Experience: 4+ years
@@ -58,6 +60,7 @@ Strong expertise in LLMs and RAG pipelines (LangChain, Pinecone, OpenAI integrat
 Experience in MLOps and deployment using FastAPI, Docker, and cloud storage.
 Skilled in data visualization and storytelling (Tableau, Power BI, Matplotlib, Plotly).
 Worked with advanced machine learning techniques: clustering, regression, NLP, computer vision.
+Experience with Time series Analysis/Forecasting (ARIMA, Prophet, TemporalCNN etc.)
 
 Recognition & Awards
 Recipient of travel grants/funding to attend international AI conferences (e.g., Indaba, DSN Bootcamp).
@@ -82,6 +85,7 @@ Platforms: LinkedIn, Medium, Twitter, TikTok
 Project: 365-day deep learning learning journey
 GitHub: github.com/AbdulazeezAde
 Medium: medium.com/@abdulazeezanalytics
+linkedin: linkedin.com/in/abdulazeezadedayo
 
 Technical Skills
 Programming & ML: Python, SQL, PyTorch, TensorFlow, Keras, FastAPI, Flask
