@@ -1,163 +1,247 @@
 import os
-import pickle
+import json
+import numpy as np
 import asyncio
+import aiohttp
 from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 from flask_cors import CORS
-import faiss
-import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 from functools import lru_cache
-from concurrent.futures import ThreadPoolExecutor
-import google.generativeai as genai
+import hashlib
+import time
 
-# Load environment variables
+# Load environment variables from .env
 load_dotenv()
 
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
-FAISS_INDEX_PATH = os.getenv('FAISS_INDEX_PATH', 'faiss_index.index')
-TEXTS_PATH = os.getenv('TEXTS_PATH', 'texts.pkl')
+RESUME_PATH = os.getenv('RESUME_PATH', 'resume.txt')
 
 app = Flask(__name__)
 CORS(app)
 
-# Global variables for fast access
-faiss_index = None
-resume_chunks = None
-executor = ThreadPoolExecutor(max_workers=2)
-
-# Initialize embedding model for queries only
-try:
-    from sentence_transformers import SentenceTransformer
-    embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
-except Exception as e:
-    print(f"Error loading embedding model: {e}")
-    embedding_model = None
-
-def load_prebuilt_index():
-    """Load pre-built FAISS index and texts"""
-    global faiss_index, resume_chunks
+class OptimizedTfidfEmbeddings:
+    def __init__(self):
+        # Optimized TF-IDF parameters for speed
+        self.vectorizer = TfidfVectorizer(
+            max_features=800,  # Reduced for speed
+            stop_words='english',
+            ngram_range=(1, 2),  # Add bigrams for better context
+            min_df=1,
+            max_df=0.95,
+            norm='l2',
+            use_idf=True
+        )
+        self.chunks = []
+        self.vectors = None
+        self.vectors_normalized = None  # Pre-normalized for faster cosine similarity
+        self._cache = {}  # Manual cache for async compatibility
     
-    try:
-        if os.path.exists(FAISS_INDEX_PATH) and os.path.exists(TEXTS_PATH):
-            # Load FAISS index
-            faiss_index = faiss.read_index(FAISS_INDEX_PATH)
-            
-            # Load texts
-            with open(TEXTS_PATH, 'rb') as f:
-                resume_chunks = pickle.load(f)
-            
-            print(f"Loaded {len(resume_chunks)} chunks from pre-built index")
-            return True
-        else:
-            print("Pre-built index files not found")
-            return False
-    except Exception as e:
-        print(f"Error loading pre-built index: {e}")
-        return False
-
-# Load on startup
-index_loaded = load_prebuilt_index()
-
-@lru_cache(maxsize=100)
-def cached_similarity_search(query_hash, k=3):
-    """Cached similarity search to avoid repeated queries"""
-    if not index_loaded or not embedding_model:
-        return []
+    def fit_transform(self, texts):
+        self.chunks = texts
+        self.vectors = self.vectorizer.fit_transform(texts)
+        # Pre-normalize vectors for faster cosine similarity
+        self.vectors_normalized = self.vectors.copy()
+        self.vectors_normalized = self.vectors_normalized.astype(np.float32)  # Use float32 for speed
+        return self.vectors
     
-    try:
-        # Convert hash back to query for embedding (in real use, you'd store embeddings)
-        # This is a simplified version - in practice, you'd cache the embeddings
-        query_embedding = embedding_model.encode([query_hash])
-        query_embedding = np.array(query_embedding, dtype=np.float32)
+    async def similarity_search_async(self, query, k=3):
+        """Async similarity search with caching"""
+        # Create hash for caching
+        query_hash = hashlib.md5(query.encode()).hexdigest()
+        cache_key = f"{query_hash}_{k}"
         
-        # Search FAISS index
-        scores, indices = faiss_index.search(query_embedding, k)
+        # Check cache first
+        if cache_key in self._cache:
+            return self._cache[cache_key]
         
-        results = []
-        for i, (score, idx) in enumerate(zip(scores[0], indices[0])):
-            if idx < len(resume_chunks) and score > 0.3:  # Similarity threshold
-                results.append({
-                    'page_content': resume_chunks[idx],
-                    'score': float(score)
-                })
+        # Run CPU-intensive search in thread pool
+        loop = asyncio.get_event_loop()
+        results = await loop.run_in_executor(None, self._perform_search, query, k)
+        
+        # Cache result
+        self._cache[cache_key] = results
+        
+        # Limit cache size
+        if len(self._cache) > 100:
+            # Remove oldest 20 entries
+            keys_to_remove = list(self._cache.keys())[:20]
+            for key in keys_to_remove:
+                del self._cache[key]
         
         return results
-    except Exception as e:
-        print(f"Error in similarity search: {e}")
-        return []
-
-def fast_similarity_search(query, k=3):
-    """Fast similarity search using pre-loaded FAISS index"""
-    if not index_loaded or not embedding_model:
-        return []
     
-    try:
-        # Embed query
-        query_embedding = embedding_model.encode([query])
-        query_embedding = np.array(query_embedding, dtype=np.float32)
+    def _perform_search(self, query, k=3):
+        """Core search logic (runs in thread pool)"""
+        if self.vectors_normalized is None:
+            return []
         
-        # Search FAISS index
-        scores, indices = faiss_index.search(query_embedding, k)
-        
-        results = []
-        for score, idx in zip(scores[0], indices[0]):
-            if idx < len(resume_chunks) and score > 0.3:
-                results.append({
-                    'page_content': resume_chunks[idx],
-                    'score': float(score)
-                })
-        
-        return results
-    except Exception as e:
-        print(f"Error in similarity search: {e}")
-        return []
+        try:
+            # Transform query using pre-fitted vectorizer
+            query_vector = self.vectorizer.transform([query])
+            query_vector = query_vector.astype(np.float32)
+            
+            # Fast cosine similarity with pre-normalized vectors
+            similarities = cosine_similarity(query_vector, self.vectors_normalized).flatten()
+            
+            # Use numpy for faster top-k selection
+            if len(similarities) > k:
+                top_indices = np.argpartition(similarities, -k)[-k:]
+                top_indices = top_indices[np.argsort(similarities[top_indices])][::-1]
+            else:
+                top_indices = np.argsort(similarities)[::-1]
+            
+            results = []
+            for idx in top_indices:
+                if similarities[idx] > 0.1:  # Lowered threshold for more results
+                    results.append({
+                        'page_content': self.chunks[idx],
+                        'score': float(similarities[idx])
+                    })
+            
+            return results
+        except Exception as e:
+            print(f"Search error: {e}")
+            return []
 
-@lru_cache(maxsize=50)
-def cached_gemini_call(context_hash, question):
-    """Cache Gemini API calls for repeated questions"""
+# Load and split resume into optimized chunks
+def load_resume_chunks():
+    if os.path.exists(RESUME_PATH):
+        try:
+            with open(RESUME_PATH, 'r', encoding='utf-8') as f:
+                text = f.read()
+        except Exception as e:
+            text = f"Error reading TXT: {e}"
+    else:
+        text = "Resume not found."
+    
+    # Optimized chunking strategy
+    chunks = []
+    
+    # Split by double newlines (paragraphs)
+    paragraphs = [p.strip() for p in text.split('\n\n') if p.strip()]
+    
+    for para in paragraphs:
+        if len(para) > 80:  # Only substantial content
+            # Smart chunking for long paragraphs
+            if len(para) > 500:
+                sentences = [s.strip() + '.' for s in para.split('.') if s.strip()]
+                current_chunk = ""
+                
+                for sentence in sentences:
+                    if len(current_chunk + sentence) <= 400:
+                        current_chunk += " " + sentence
+                    else:
+                        if len(current_chunk.strip()) > 80:
+                            chunks.append(current_chunk.strip())
+                        current_chunk = sentence
+                
+                if len(current_chunk.strip()) > 80:
+                    chunks.append(current_chunk.strip())
+            else:
+                chunks.append(para)
+    
+    # Remove duplicates while preserving order
+    seen = set()
+    unique_chunks = []
+    for chunk in chunks:
+        chunk_hash = hashlib.md5(chunk.encode()).hexdigest()
+        if chunk_hash not in seen:
+            seen.add(chunk_hash)
+            unique_chunks.append(chunk)
+    
+    return unique_chunks
+
+# Initialize the embedding system
+print("Loading resume chunks...")
+RESUME_CHUNKS = load_resume_chunks()
+print(f"Loaded {len(RESUME_CHUNKS)} chunks")
+
+print("Building TF-IDF index...")
+EMBEDDINGS = OptimizedTfidfEmbeddings()
+
+if RESUME_CHUNKS:
+    EMBEDDINGS.fit_transform(RESUME_CHUNKS)
+    print("TF-IDF index built successfully")
+
+# Async Gemini API call
+async def call_gemini_async(context, question):
+    """Async Gemini API call"""
     try:
+        import google.generativeai as genai
         genai.configure(api_key=GEMINI_API_KEY)
         model = genai.GenerativeModel('gemini-2.5-flash')
         
         prompt = (
             "You are an assistant with access to details about me. Don't mention the resume. "
             "Answer the following question based ONLY on the provided context. "
-            "If the answer is not present, say 'I could not find that information about Abdulazeez.'\n\n"
-            f"Context:\n{context_hash}\n\nQuestion: {question}\n\n"
+            "If the user is in chat mode, e.g says hello or hi or any form of greeting. then reply the greeting with either hello or hi too."
+            "If the answer is not present, say 'I could not find that information about Abdulazeez. What else woulfd you like to know?'\n\n"
+            f"Context:\n{context}\n\nQuestion: {question}\n\n"
             "If the context is long, summarize or return only the most relevant information."
         )
         
-        response = model.generate_content(prompt)
+        # Run API call in thread pool to avoid blocking
+        loop = asyncio.get_event_loop()
+        response = await loop.run_in_executor(None, model.generate_content, prompt)
+        
         return response.text.strip() if hasattr(response, 'text') else str(response)
     except Exception as e:
         return f"Error with Gemini API: {e}"
 
-def ask_gemini_async(question):
-    """Async wrapper for Gemini API call"""
+# Cache for responses
+response_cache = {}
+
+async def ask_gemini_async(question):
+    """Main async RAG function"""
     if not GEMINI_API_KEY:
         return "Gemini API key not set."
     
-    if not index_loaded:
-        return "FAISS index not loaded."
+    if not RESUME_CHUNKS:
+        return "Resume not loaded."
     
-    # Get relevant chunks using pre-loaded FAISS
-    docs = fast_similarity_search(question, k=3)
+    # Check response cache first
+    question_hash = hashlib.md5(question.encode()).hexdigest()
+    if question_hash in response_cache:
+        return response_cache[question_hash]
     
-    if not docs:
-        return "I could not find that information about Abdulazeez."
-    
-    # Prepare context
-    rag_context = "\n---\n".join([d['page_content'] for d in docs])
-    
-    # Use caching for repeated queries
-    context_hash = hash(rag_context)
-    return cached_gemini_call(str(context_hash), question)
+    try:
+        # Async retrieval
+        start_time = time.time()
+        docs = await EMBEDDINGS.similarity_search_async(question, k=3)
+        retrieval_time = time.time() - start_time
+        
+        if not docs:
+            return "I could not find that information about Abdulazeez."
+        
+        # Prepare context
+        rag_context = "\n---\n".join([d['page_content'] for d in docs])
+        
+        # Async Gemini call
+        start_time = time.time()
+        response = await call_gemini_async(rag_context, question)
+        api_time = time.time() - start_time
+        
+        # Cache response
+        response_cache[question_hash] = response
+        
+        # Limit cache size
+        if len(response_cache) > 50:
+            # Remove oldest entries
+            keys_to_remove = list(response_cache.keys())[:10]
+            for key in keys_to_remove:
+                del response_cache[key]
+        
+        print(f"Retrieval: {retrieval_time:.3f}s, API: {api_time:.3f}s")
+        return response
+        
+    except Exception as e:
+        return f"Error: {e}"
 
 @app.route('/', methods=['GET'])
 def home():
-    status = "loaded" if index_loaded else "not loaded"
-    chunks_count = len(resume_chunks) if resume_chunks else 0
-    return f"Abdulazeez Chat API is running. FAISS index: {status} ({chunks_count} chunks)", 200
+    return f"Abdulazeez Chat API is running. Loaded {len(RESUME_CHUNKS)} chunks.", 200
 
 @app.route('/chat', methods=['POST'])
 def chat():
@@ -167,9 +251,13 @@ def chat():
     if not question:
         return jsonify({'error': 'No message provided'}), 400
     
-    # Use thread executor for non-blocking operation
-    future = executor.submit(ask_gemini_async, question)
-    answer = future.result(timeout=30)  # 30s timeout
+    # Run async function in sync context
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    try:
+        answer = loop.run_until_complete(ask_gemini_async(question))
+    finally:
+        loop.close()
     
     return jsonify({'answer': answer})
 
@@ -177,9 +265,9 @@ def chat():
 def health():
     return jsonify({
         'status': 'healthy',
-        'faiss_loaded': index_loaded,
-        'chunks_count': len(resume_chunks) if resume_chunks else 0,
-        'embedding_model_loaded': embedding_model is not None
+        'chunks_loaded': len(RESUME_CHUNKS),
+        'retrieval_cache_size': len(getattr(EMBEDDINGS, '_cache', {})),
+        'response_cache_size': len(response_cache)
     })
 """
 if __name__ == '__main__':
