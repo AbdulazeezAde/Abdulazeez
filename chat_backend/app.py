@@ -2,7 +2,6 @@ import os
 import json
 import numpy as np
 import asyncio
-import aiohttp
 from flask import Flask, request, jsonify
 from dotenv import load_dotenv
 from flask_cors import CORS
@@ -176,8 +175,7 @@ async def call_gemini_async(context, question):
         prompt = (
             "You are an assistant with access to details about me. Don't mention the resume. "
             "Answer the following question based ONLY on the provided context. "
-            "If the user is in chat mode, e.g says hello or hi or any form of greeting. then reply the greeting with either hello or hi too."
-            "If the answer is not present, say 'I could not find that information about Abdulazeez. What else woulfd you like to know?'\n\n"
+            "If the answer is not present, say 'I could not find that information about Abdulazeez.'\n\n"
             f"Context:\n{context}\n\nQuestion: {question}\n\n"
             "If the context is long, summarize or return only the most relevant information."
         )
@@ -269,8 +267,7 @@ def health():
         'retrieval_cache_size': len(getattr(EMBEDDINGS, '_cache', {})),
         'response_cache_size': len(response_cache)
     })
-"""
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5001))
     app.run(host='0.0.0.0', port=port, debug=False)
-"""
