@@ -182,6 +182,11 @@ h6 {
   border: 8px solid color-mix(in srgb, var(--default-color), transparent 85%);
 }
 
+.main .img-head{
+  width: 100%;
+  height:auto;
+}
+
 .header .logo {
   line-height: 1;
   margin-bottom: 15px;
@@ -529,6 +534,10 @@ section,
 /*--------------------------------------------------------------
 # Global Section Titles
 --------------------------------------------------------------*/
+.container {
+  padding-top: 20%;
+}
+
 .section-title {
   padding-bottom: 60px;
   position: relative;
