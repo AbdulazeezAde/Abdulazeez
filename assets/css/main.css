@@ -694,14 +694,20 @@ section,
   border: 1px solid color-mix(in srgb, var(--default-color), transparent 88%);
   border-radius: 8px;
   box-shadow: 0 18px 46px rgba(0, 0, 0, 0.08);
-  margin: 0 auto;
-  max-width: 1040px;
   padding: 34px;
   width: 100%;
 }
 
-.about-content {
-  padding: 0;
+.about-layout {
+  align-items: stretch;
+  display: grid;
+  gap: 28px;
+  grid-template-columns: minmax(0, 1.55fr) minmax(280px, 0.72fr);
+  margin-bottom: 26px;
+}
+
+.about-copy {
+  min-width: 0;
 }
 
 .about-kicker {
@@ -715,24 +721,36 @@ section,
   text-transform: uppercase;
 }
 
-.about-content h3 {
-  font-size: 30px;
+.about-copy h3 {
+  font-size: clamp(30px, 3vw, 42px);
   line-height: 1.25;
   margin-bottom: 14px;
+  max-width: 860px;
 }
 
-.about-content > p {
+.about-copy > p {
   color: color-mix(in srgb, var(--default-color), transparent 22%);
-  font-size: 16px;
+  font-size: 17px;
   line-height: 1.75;
-  margin-bottom: 22px;
+  margin-bottom: 20px;
+  max-width: 820px;
+}
+
+.about-snapshot {
+  background: color-mix(in srgb, var(--background-color), #fff 48%);
+  border: 1px solid color-mix(in srgb, var(--default-color), transparent 88%);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  justify-content: space-between;
+  padding: 22px;
 }
 
 .about-focus-grid {
   display: grid;
-  gap: 14px;
+  gap: 16px;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  margin-bottom: 22px;
 }
 
 .about-focus-grid > div {
@@ -763,16 +781,19 @@ section,
 }
 
 .about-meta {
-  border-top: 1px solid color-mix(in srgb, var(--default-color), transparent 90%);
   display: grid;
-  gap: 0;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin-bottom: 18px;
-  padding-top: 14px;
+  gap: 14px;
+  grid-template-columns: 1fr;
 }
 
 .about-meta div {
-  padding: 10px 14px 10px 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--default-color), transparent 90%);
+  padding-bottom: 12px;
+}
+
+.about-meta div:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
 }
 
 .about-meta strong {
@@ -786,13 +807,14 @@ section,
 .about-meta span {
   color: color-mix(in srgb, var(--default-color), transparent 28%);
   font-size: 14px;
+  overflow-wrap: anywhere;
 }
 
 .about-tool-strip {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  margin-bottom: 18px;
+  margin-bottom: 0;
 }
 
 .about-tool-strip span {
@@ -806,8 +828,22 @@ section,
 }
 
 @media (max-width: 1199px) {
-  .about-panel {
+  .about-layout {
+    grid-template-columns: minmax(0, 1.25fr) minmax(260px, 0.8fr);
+  }
+}
+
+@media (max-width: 991px) {
+  .about-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .about-snapshot {
     max-width: 100%;
+  }
+
+  .about-meta {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
@@ -816,7 +852,7 @@ section,
     padding: 22px;
   }
 
-  .about-content h3 {
+  .about-copy h3 {
     font-size: 24px;
   }
 
