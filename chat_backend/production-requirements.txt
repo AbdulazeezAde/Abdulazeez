@@ -1,10 +1,5 @@
 flask
-dotenv
-google-generativeai
-waitress
-langchain
-langchain-google-genai
-langchain-community
 flask-cors
-python-dotenv
-faiss-cpu
+gunicorn
+numpy
+scikit-learn

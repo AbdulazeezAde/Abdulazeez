@@ -1,1 +1,2 @@
-This is my portfolio website. it contains my projects on Data Analysis, Data science and ML.
+The contact form is handled by the Flask backend at /contact.
+It accepts name, email, subject, and message fields and returns OK for the frontend validation script.

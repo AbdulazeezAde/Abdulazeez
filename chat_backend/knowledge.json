@@ -1,0 +1,246 @@
+{
+  "profile": {
+    "name": "Abdulazeez Adedayo",
+    "roles": "Data Scientist, Machine Learning Engineer, AI Researcher",
+    "summary": "Data and AI professional with 4+ years of experience building machine learning, analytics, automation, and applied AI systems.",
+    "location": "Lagos, Nigeria"
+  },
+  "contact": {
+    "email": "abdulazeezadedayo@gmail.com",
+    "phone": "+234 8134936948",
+    "github": "https://github.com/AbdulazeezAde",
+    "linkedin": "https://linkedin.com/in/abdulazeezadedayo",
+    "medium": "https://medium.com/@abdulazeezanalytics"
+  },
+  "experience": [
+    {
+      "role": "Data Scientist",
+      "company": "Data Quotient",
+      "period": "Dec 2024 - Present",
+      "highlights": [
+        "Built Retrieval-Augmented Generation workflows for Leveller to improve contextual accuracy in AI outputs.",
+        "Designed 100+ JSON schemas for structured storage and better data consistency.",
+        "Automated data collection pipelines and reduced manual effort by about 50%.",
+        "Stored processed data in Amazon S3 and built workflows for analysis, prediction, and visualization."
+      ]
+    },
+    {
+      "role": "Data Scientist",
+      "company": "Emergency Communications Centre",
+      "period": "Nov 2022 - Nov 2024",
+      "highlights": [
+        "Designed a MySQL database for more than 1M call records.",
+        "Analyzed weekly call trends and supported operational reporting.",
+        "Introduced AI-driven classification and prioritization for emergency call data.",
+        "Built dashboards and reports for emergency response decision-making."
+      ]
+    }
+  ],
+  "education": {
+    "university": "Ladoke Akintola University of Technology, Ogbomoso",
+    "degree": "Bachelor of Technology in Computer Engineering",
+    "classification": "Second Class Upper Division",
+    "cgpa": "4.36/5.0",
+    "courses": [
+      "Deep Learning Specialization",
+      "Google Data Analytics Professional Certificate",
+      "SQL",
+      "Excel"
+    ]
+  },
+  "skills": {
+    "machine learning and ai": [
+      "Python",
+      "PyTorch",
+      "TensorFlow",
+      "Keras",
+      "Scikit-learn",
+      "XGBoost",
+      "RAG",
+      "LangChain"
+    ],
+    "data and analytics": [
+      "SQL",
+      "Pandas",
+      "NumPy",
+      "MySQL",
+      "Google BigQuery",
+      "Excel",
+      "Tableau",
+      "Power BI"
+    ],
+    "backend and deployment": [
+      "FastAPI",
+      "Flask",
+      "Docker",
+      "OpenAPI",
+      "Amazon S3",
+      "GCP",
+      "Microsoft Azure"
+    ]
+  },
+  "projects": [
+    {
+      "name": "Enterprise Digital Twin AI",
+      "aliases": [
+        "enterprise dtwin",
+        "digital twin",
+        "enterprise-dtwin-ai"
+      ],
+      "category": "AI Engineering",
+      "summary": "Private MangoZest Enterprises work building a digital twin clone that answers questions like a specific person or business role, including tone, behaviour, communication style, and controlled company context.",
+      "stack": [
+        "FastAPI",
+        "RAG",
+        "authentication",
+        "digital twin workflows",
+        "retrieval"
+      ],
+      "details": [
+        "Built for MangoZest Enterprises as private client/internal work.",
+        "Uses company context retrieval to answer questions from controlled internal knowledge.",
+        "Shapes responses around the expected tone, behaviour, and communication pattern of the twin.",
+        "Keeps authentication, access checks, and sensitive data boundaries on the backend.",
+        "The source code is private, so the portfolio explains the system rather than linking to a public repository."
+      ],
+      "url": ""
+    },
+    {
+      "name": "Lassa Fever Outbreak Prediction System",
+      "aliases": [
+        "lassa",
+        "lassa fever",
+        "lassa fever project"
+      ],
+      "category": "Public Health ML",
+      "summary": "Surveillance and forecasting platform for Nigerian Lassa fever data with a FastAPI backend, Streamlit dashboard, CSV upload workflow, risk scoring, and forecast endpoints.",
+      "stack": [
+        "FastAPI",
+        "Streamlit",
+        "Python",
+        "Forecasting"
+      ],
+      "details": [
+        "Uses a CSV-based data boundary for case and environmental data.",
+        "Provides endpoints for cases, summaries, uploads, forecasts, risk levels, and metrics.",
+        "Supports offline model training and dashboard exploration."
+      ],
+      "url": "https://github.com/AbdulazeezAde/Lassa-Fever-Project"
+    },
+    {
+      "name": "Air Quality Respiratory Risk Prediction",
+      "aliases": [
+        "air quality",
+        "respiratory risk",
+        "air quality project"
+      ],
+      "category": "Machine Learning",
+      "summary": "ML pipeline and API for predicting respiratory disease risk from air quality, weather, seasonal, and lag features.",
+      "stack": [
+        "Python",
+        "XGBoost",
+        "Scikit-learn",
+        "FastAPI",
+        "React"
+      ],
+      "details": [
+        "Compares Logistic Regression, Random Forest, and XGBoost models.",
+        "Uses pollutant, AQI, weather, seasonal, and lag-based features.",
+        "Includes a local API and frontend integration for location-based predictions."
+      ],
+      "url": "https://github.com/AbdulazeezAde/Air-Quality-Project"
+    },
+    {
+      "name": "Identity Verification Engine",
+      "aliases": [
+        "identity verification",
+        "identity engine",
+        "verification engine",
+        "kyc"
+      ],
+      "category": "Backend Systems",
+      "summary": "Private MangoZest Enterprises identity verification engine using OCR to extract ID details, face extraction, liveness detection, face matching, and WebSocket status updates for the frontend.",
+      "stack": [
+        "FastAPI",
+        "OCR",
+        "face matching",
+        "liveness detection",
+        "WebSockets"
+      ],
+      "details": [
+        "Built for MangoZest Enterprises as private client/internal work.",
+        "Uses OCR to extract structured details from identity documents.",
+        "Extracts the face from the ID document and compares it with the user's live stream face.",
+        "Uses liveness detection to reduce spoofing risk during verification.",
+        "Transfers verification progress and messages to the frontend through WebSockets.",
+        "The source code is private, so the portfolio explains the system rather than linking to a public repository."
+      ],
+      "url": ""
+    },
+    {
+      "name": "ID Extract",
+      "aliases": [
+        "id extract",
+        "id-extract",
+        "document extraction",
+        "ocr",
+        "passport"
+      ],
+      "category": "Computer Vision",
+      "summary": "Document extraction engine for ID cards and passports, focused on OCR reliability, MRZ recovery, model manifest checks, ONNX runtime work, and packaging validation.",
+      "stack": [
+        "PaddleOCR",
+        "ONNX",
+        "Python",
+        "Packaging"
+      ],
+      "details": [
+        "Handles ID and passport OCR extraction.",
+        "Includes MRZ-first recovery and model manifest integrity checks.",
+        "Validates packaging and runtime behavior before release."
+      ],
+      "url": "https://github.com/AbdulazeezAde/id-extract"
+    },
+    {
+      "name": "SuperStore Regional Dashboard",
+      "aliases": [
+        "superstore",
+        "superstore dashboard",
+        "tableau dashboard"
+      ],
+      "category": "Data Analytics",
+      "summary": "Tableau dashboard for regional SuperStore sales performance, profit tracking, year-over-year movement, and top sub-category analysis.",
+      "stack": [
+        "Tableau",
+        "Data Visualization",
+        "Dashboard Design"
+      ],
+      "details": [
+        "Tracks total sales, profit, and year-over-year changes.",
+        "Breaks down sub-category performance by region.",
+        "Designed for quick business review and stakeholder communication."
+      ],
+      "url": "https://public.tableau.com/app/profile/abdulazeez.adedayo/viz/SuperStoreRegionalDashboard/Dashboard2"
+    }
+  ],
+  "community": [
+    "AI Saturdays Lagos",
+    "DSN Osogbo",
+    "AI+ LAUTECH",
+    "Data Science Africa",
+    "Masakhane",
+    "Black in AI",
+    "GDG Ikorodu"
+  ],
+  "research": [
+    "African NLP and low-resource language technology",
+    "Yoruba machine translation robustness",
+    "Speech datasets for English-Yoruba machine translation",
+    "Healthcare AI and public health forecasting"
+  ],
+  "links": {
+    "github": "https://github.com/AbdulazeezAde",
+    "medium": "https://medium.com/@abdulazeezanalytics",
+    "linkedin": "https://linkedin.com/in/abdulazeezadedayo"
+  }
+}

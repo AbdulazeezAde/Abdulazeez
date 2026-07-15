@@ -1,274 +1,400 @@
-import os
+import hashlib
 import json
+import os
+import re
+import time
+from pathlib import Path
+
 import numpy as np
-import asyncio
-from flask import Flask, request, jsonify
-from dotenv import load_dotenv
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-from functools import lru_cache
-import google.generativeai as genai
-import hashlib
-import time
 
-# Load environment variables from .env
-load_dotenv()
 
-GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
-RESUME_PATH = os.getenv('RESUME_PATH', 'resume.txt')
+BASE_DIR = Path(__file__).resolve().parent
+os.environ.setdefault("OMP_NUM_THREADS", "1")
+os.environ.setdefault("MKL_NUM_THREADS", "1")
+os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
+
+RESUME_PATH = BASE_DIR / "Resume.txt"
+KNOWLEDGE_PATH = BASE_DIR / "knowledge.json"
+CONTACT_MESSAGES_PATH = BASE_DIR / "contact_messages.jsonl"
 
 app = Flask(__name__)
 CORS(app)
 
-class OptimizedTfidfEmbeddings:
-    def __init__(self):
-        # Optimized TF-IDF
+
+def normalize_text(value):
+    return re.sub(r"\s+", " ", str(value or "")).strip()
+
+
+def normalize_query(value):
+    return normalize_text(value).lower()
+
+
+def clean_contact_field(value, max_length):
+    return normalize_text(value)[:max_length]
+
+
+def append_contact_message(record):
+    with open(CONTACT_MESSAGES_PATH, "a", encoding="utf-8") as f:
+        f.write(json.dumps(record, ensure_ascii=True) + "\n")
+
+
+def load_knowledge():
+    if not KNOWLEDGE_PATH.exists():
+        return {}
+    with open(KNOWLEDGE_PATH, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+KNOWLEDGE = load_knowledge()
+
+
+def read_resume_text():
+    if not RESUME_PATH.exists():
+        return ""
+    with open(RESUME_PATH, "r", encoding="utf-8") as f:
+        return f.read()
+
+
+def split_resume_chunks(text):
+    chunks = []
+    current_heading = ""
+
+    for block in [part.strip() for part in text.split("\n\n") if part.strip()]:
+        if block.startswith("#"):
+            current_heading = block.strip("# ").strip()
+            continue
+
+        if len(block) < 35:
+            continue
+
+        if len(block) > 650:
+            sentences = [s.strip() for s in re.split(r"(?<=[.!?])\s+", block) if s.strip()]
+            current = []
+            current_len = 0
+            for sentence in sentences:
+                if current_len + len(sentence) > 500 and current:
+                    chunks.append(f"{current_heading}: {' '.join(current)}".strip(": "))
+                    current = [sentence]
+                    current_len = len(sentence)
+                else:
+                    current.append(sentence)
+                    current_len += len(sentence)
+            if current:
+                chunks.append(f"{current_heading}: {' '.join(current)}".strip(": "))
+        else:
+            chunks.append(f"{current_heading}: {block}".strip(": "))
+
+    return dedupe(chunks)
+
+
+def dedupe(items):
+    seen = set()
+    unique = []
+    for item in items:
+        key = hashlib.md5(item.encode("utf-8")).hexdigest()
+        if key not in seen:
+            unique.append(item)
+            seen.add(key)
+    return unique
+
+
+def flatten_knowledge_chunks(knowledge):
+    chunks = []
+
+    profile = knowledge.get("profile", {})
+    if profile:
+        chunks.append("Profile: " + " ".join(str(v) for v in profile.values() if v))
+
+    contact = knowledge.get("contact", {})
+    if contact:
+        chunks.append("Contact: " + ", ".join(f"{k}: {v}" for k, v in contact.items()))
+
+    for item in knowledge.get("experience", []):
+        bullets = " ".join(item.get("highlights", []))
+        chunks.append(f"Experience: {item.get('role')} at {item.get('company')} ({item.get('period')}). {bullets}")
+
+    education = knowledge.get("education", {})
+    if education:
+        chunks.append("Education: " + " ".join(str(v) for v in education.values() if v))
+
+    for group, skills in knowledge.get("skills", {}).items():
+        chunks.append(f"Skills - {group}: {', '.join(skills)}")
+
+    for project in knowledge.get("projects", []):
+        sections = " ".join(project.get("details", []))
+        chunks.append(
+            f"Project: {project.get('name')}. Category: {project.get('category')}. "
+            f"Summary: {project.get('summary')} Stack: {', '.join(project.get('stack', []))}. {sections}"
+        )
+
+    for section in ("community", "research", "links"):
+        value = knowledge.get(section)
+        if isinstance(value, list):
+            chunks.append(f"{section.title()}: " + "; ".join(value))
+        elif isinstance(value, dict):
+            chunks.append(f"{section.title()}: " + ", ".join(f"{k}: {v}" for k, v in value.items()))
+
+    return dedupe([normalize_text(chunk) for chunk in chunks if normalize_text(chunk)])
+
+
+class LocalRetriever:
+    def __init__(self, chunks):
+        self.chunks = chunks
+        self.cache = {}
         self.vectorizer = TfidfVectorizer(
-            max_features=800, 
-            stop_words='english',
-            ngram_range=(1, 2),  # Add bigrams for better context
+            max_features=1200,
+            stop_words="english",
+            ngram_range=(1, 2),
             min_df=1,
             max_df=0.95,
-            norm='l2',
-            use_idf=True
+            norm="l2",
         )
-        self.chunks = []
         self.vectors = None
-        self.vectors_normalized = None  # Pre-normalized for faster cosine similarity
-        self._cache = {}  # Manual cache for async compatibility
-    
-    def fit_transform(self, texts):
-        self.chunks = texts
-        self.vectors = self.vectorizer.fit_transform(texts)
-        # Pre-normalize vectors for faster cosine similarity
-        self.vectors_normalized = self.vectors.copy()
-        self.vectors_normalized = self.vectors_normalized.astype(np.float32)  # Use float32 for speed
-        return self.vectors
-    
-    async def similarity_search_async(self, query, k=3):
-        """Async similarity search with caching"""
-        # Create hash for caching
-        query_hash = hashlib.md5(query.encode()).hexdigest()
-        cache_key = f"{query_hash}_{k}"
-        
-        # Check cache first
-        if cache_key in self._cache:
-            return self._cache[cache_key]
-        
-        # Run CPU-intensive search in thread pool
-        loop = asyncio.get_event_loop()
-        results = await loop.run_in_executor(None, self._perform_search, query, k)
-        
-        # Cache result
-        self._cache[cache_key] = results
-        
-        # Limit cache size
-        if len(self._cache) > 100:
-            # Remove oldest 20 entries
-            keys_to_remove = list(self._cache.keys())[:20]
-            for key in keys_to_remove:
-                del self._cache[key]
-        
+        if chunks:
+            self.vectors = self.vectorizer.fit_transform(chunks).astype(np.float32)
+
+    def search(self, query, k=4, min_score=0.08):
+        if self.vectors is None:
+            return []
+
+        cache_key = f"{hashlib.md5(query.encode('utf-8')).hexdigest()}:{k}:{min_score}"
+        if cache_key in self.cache:
+            return self.cache[cache_key]
+
+        query_vector = self.vectorizer.transform([query]).astype(np.float32)
+        similarities = cosine_similarity(query_vector, self.vectors).flatten()
+        top_indices = np.argsort(similarities)[::-1][:k]
+
+        results = [
+            {"content": self.chunks[idx], "score": float(similarities[idx])}
+            for idx in top_indices
+            if similarities[idx] >= min_score
+        ]
+
+        self.cache[cache_key] = results
+        if len(self.cache) > 120:
+            for key in list(self.cache.keys())[:30]:
+                del self.cache[key]
         return results
-    
-    def _perform_search(self, query, k=3):
-        """Core search logic (runs in thread pool)"""
-        if self.vectors_normalized is None:
-            return []
-        
-        try:
-            # Transform query using pre-fitted vectorizer
-            query_vector = self.vectorizer.transform([query])
-            query_vector = query_vector.astype(np.float32)
-            
-            # Fast cosine similarity with pre-normalized vectors
-            similarities = cosine_similarity(query_vector, self.vectors_normalized).flatten()
-            
-            # Use numpy for faster top-k selection
-            if len(similarities) > k:
-                top_indices = np.argpartition(similarities, -k)[-k:]
-                top_indices = top_indices[np.argsort(similarities[top_indices])][::-1]
-            else:
-                top_indices = np.argsort(similarities)[::-1]
-            
-            results = []
-            for idx in top_indices:
-                if similarities[idx] > 0.1:  # Lowered threshold for more results
-                    results.append({
-                        'page_content': self.chunks[idx],
-                        'score': float(similarities[idx])
-                    })
-            
-            return results
-        except Exception as e:
-            print(f"Search error: {e}")
-            return []
 
-# Load and split resume into optimized chunks
-def load_resume_chunks():
-    if os.path.exists(RESUME_PATH):
-        try:
-            with open(RESUME_PATH, 'r', encoding='utf-8') as f:
-                text = f.read()
-        except Exception as e:
-            text = f"Error reading TXT: {e}"
-    else:
-        text = "Resume not found."
-    
-    # Optimized chunking strategy
-    chunks = []
-    
-    # Split by double newlines (paragraphs)
-    paragraphs = [p.strip() for p in text.split('\n\n') if p.strip()]
-    
-    for para in paragraphs:
-        if len(para) > 80:  # Only substantial content
-            # Smart chunking for long paragraphs
-            if len(para) > 500:
-                sentences = [s.strip() + '.' for s in para.split('.') if s.strip()]
-                current_chunk = ""
-                
-                for sentence in sentences:
-                    if len(current_chunk + sentence) <= 400:
-                        current_chunk += " " + sentence
-                    else:
-                        if len(current_chunk.strip()) > 80:
-                            chunks.append(current_chunk.strip())
-                        current_chunk = sentence
-                
-                if len(current_chunk.strip()) > 80:
-                    chunks.append(current_chunk.strip())
-            else:
-                chunks.append(para)
-    
-    # Remove duplicates while preserving order
-    seen = set()
-    unique_chunks = []
-    for chunk in chunks:
-        chunk_hash = hashlib.md5(chunk.encode()).hexdigest()
-        if chunk_hash not in seen:
-            seen.add(chunk_hash)
-            unique_chunks.append(chunk)
-    
-    return unique_chunks
 
-# Initialize the embedding system
-print("Loading resume chunks...")
-RESUME_CHUNKS = load_resume_chunks()
-print(f"Loaded {len(RESUME_CHUNKS)} chunks")
+RESUME_TEXT = read_resume_text()
+RESUME_CHUNKS = split_resume_chunks(RESUME_TEXT)
+KNOWLEDGE_CHUNKS = flatten_knowledge_chunks(KNOWLEDGE)
+ALL_CHUNKS = dedupe(KNOWLEDGE_CHUNKS + RESUME_CHUNKS)
+RETRIEVER = LocalRetriever(ALL_CHUNKS)
+RESPONSE_CACHE = {}
 
-print("Building TF-IDF index...")
-EMBEDDINGS = OptimizedTfidfEmbeddings()
+print(f"Loaded {len(KNOWLEDGE_CHUNKS)} knowledge chunks and {len(RESUME_CHUNKS)} resume chunks")
 
-if RESUME_CHUNKS:
-    EMBEDDINGS.fit_transform(RESUME_CHUNKS)
-    print("TF-IDF index built successfully")
 
-# Async Gemini API call
-async def call_gemini_async(context, question):
-    """Async Gemini API call"""
-    try:
-        genai.configure(api_key=GEMINI_API_KEY)
-        model = genai.GenerativeModel('gemini-2.5-pro')
-        
-        prompt = (
-            "You are an assistant with access to details about me. Don't mention the resume. "
-            "IF user is trying to chat e.g user says hello or hi, no need to check context, reply with hello, what do you want to know about Abdulazeez?"
-            "Answer the following question based ONLY on the provided context asides when user says hello, hi or user is greeting."            
-            "If the answer is not present, say 'I could not find that information about Abdulazeez, what else would you like to know?'\n\n"
-            f"Context:\n{context}\n\nQuestion: {question}\n\n"
-            "If the context is long, summarize or return only the most relevant information."
+def is_greeting(query):
+    return bool(re.fullmatch(r"(hi|hello|hey|good morning|good afternoon|good evening|yo|sup)[!. ]*", query))
+
+
+def contains_any(query, words):
+    return any(word in query for word in words)
+
+
+def find_project(query):
+    projects = KNOWLEDGE.get("projects", [])
+    for project in projects:
+        aliases = [project.get("name", "")] + project.get("aliases", [])
+        if any(normalize_query(alias) and normalize_query(alias) in query for alias in aliases):
+            return project
+    return None
+
+
+def format_list(items):
+    return "\n".join(f"- {item}" for item in items if item)
+
+
+def format_project(project):
+    lines = [
+        f"{project['name']} is a {project.get('category', 'portfolio')} project.",
+        project.get("summary", ""),
+    ]
+    if project.get("stack"):
+        lines.append("Tools/stack: " + ", ".join(project["stack"]) + ".")
+    if project.get("details"):
+        lines.append("Key details:\n" + format_list(project["details"]))
+    if project.get("url"):
+        lines.append(f"Project link: {project['url']}")
+    return "\n\n".join(line for line in lines if line)
+
+
+def answer_from_intent(question):
+    query = normalize_query(question)
+
+    if is_greeting(query):
+        return "Hello, what would you like to know about Abdulazeez?"
+
+    if contains_any(query, ["contact", "email", "phone", "linkedin", "github", "reach", "hire"]):
+        contact = KNOWLEDGE.get("contact", {})
+        if not contact:
+            return None
+        return (
+            "You can contact Abdulazeez through:\n"
+            + format_list(
+                [
+                    f"Email: {contact.get('email')}",
+                    f"Phone: {contact.get('phone')}",
+                    f"LinkedIn: {contact.get('linkedin')}",
+                    f"GitHub: {contact.get('github')}",
+                ]
+            )
         )
-        
-        # Run API call in thread pool to avoid blocking
-        loop = asyncio.get_event_loop()
-        response = await loop.run_in_executor(None, model.generate_content, prompt)
-        
-        return response.text.strip() if hasattr(response, 'text') else str(response)
-    except Exception as e:
-        return f"Error with Gemini API: {e}"
 
-# Cache for responses
-response_cache = {}
+    project = find_project(query)
+    if project:
+        return format_project(project)
 
-async def ask_gemini_async(question):
-    """Main async RAG function"""
-    if not GEMINI_API_KEY:
-        return "Gemini API key not set."
-    
-    if not RESUME_CHUNKS:
-        return "Resume not loaded."
-    
-    # Check response cache first
-    question_hash = hashlib.md5(question.encode()).hexdigest()
-    if question_hash in response_cache:
-        return response_cache[question_hash]
-    
-    try:
-        # Async retrieval
-        start_time = time.time()
-        docs = await EMBEDDINGS.similarity_search_async(question, k=3)
-        retrieval_time = time.time() - start_time
-        
-        if not docs:
-            return "I could not find that information about Abdulazeez. what else would you like to know?"
-        
-        # Prepare context
-        rag_context = "\n---\n".join([d['page_content'] for d in docs])
-        
-        # Async Gemini call
-        start_time = time.time()
-        response = await call_gemini_async(rag_context, question)
-        api_time = time.time() - start_time
-        
-        # Cache response
-        response_cache[question_hash] = response
-        
-        # Limit cache size
-        if len(response_cache) > 50:
-            # Remove oldest entries
-            keys_to_remove = list(response_cache.keys())[:10]
-            for key in keys_to_remove:
-                del response_cache[key]
-        
-        print(f"Retrieval: {retrieval_time:.3f}s, API: {api_time:.3f}s")
-        return response
-        
-    except Exception as e:
-        return f"Error: {e}"
+    if contains_any(query, ["project", "portfolio", "built", "work on", "worked on"]):
+        projects = KNOWLEDGE.get("projects", [])
+        return "Selected projects:\n" + format_list(
+            [f"{p['name']}: {p.get('summary', '')}" for p in projects]
+        )
 
-@app.route('/', methods=['GET'])
-def home():
-    return f"Abdulazeez Chat API is running. Loaded {len(RESUME_CHUNKS)} chunks.", 200
+    if contains_any(query, ["skill", "tools", "stack", "technology", "technologies"]):
+        skills = KNOWLEDGE.get("skills", {})
+        if not skills:
+            return None
+        return "Abdulazeez works with:\n" + "\n".join(
+            f"- {group.title()}: {', '.join(values)}" for group, values in skills.items()
+        )
 
-@app.route('/chat', methods=['POST'])
-def chat():
-    data = request.json
-    question = data.get('message', '')
-    
+    if contains_any(query, ["experience", "job", "work history", "employment", "role"]):
+        experience = KNOWLEDGE.get("experience", [])
+        return "Work experience:\n" + format_list(
+            [
+                f"{item.get('role')} at {item.get('company')} ({item.get('period')}): "
+                + " ".join(item.get("highlights", [])[:2])
+                for item in experience
+            ]
+        )
+
+    if contains_any(query, ["education", "degree", "school", "university", "cgpa", "study", "studied"]):
+        education = KNOWLEDGE.get("education", {})
+        if not education:
+            return None
+        return (
+            f"Abdulazeez studied {education.get('degree')} at {education.get('university')}. "
+            f"Classification: {education.get('classification')}. "
+            f"Additional courses include {', '.join(education.get('courses', []))}."
+        )
+
+    if contains_any(query, ["community", "volunteer", "leadership", "group"]):
+        community = KNOWLEDGE.get("community", [])
+        if community:
+            return "Community involvement:\n" + format_list(community)
+
+    if contains_any(query, ["research", "publication", "african nlp", "yoruba", "language"]):
+        research = KNOWLEDGE.get("research", [])
+        if research:
+            return "Research interests and work:\n" + format_list(research)
+
+    return None
+
+
+def compose_retrieval_answer(question):
+    docs = RETRIEVER.search(question, k=4)
+    if not docs:
+        return "I could not find that information about Abdulazeez. What else would you like to know?"
+
+    snippets = []
+    for doc in docs[:3]:
+        content = doc["content"]
+        if len(content) > 520:
+            content = content[:517].rstrip() + "..."
+        snippets.append(content)
+
+    return "Here is what I found about Abdulazeez:\n" + format_list(snippets)
+
+
+def answer_question(question):
+    question = normalize_text(question)
     if not question:
-        return jsonify({'error': 'No message provided'}), 400
-    
-    # Run async function in sync context
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    try:
-        answer = loop.run_until_complete(ask_gemini_async(question))
-    finally:
-        loop.close()
-    
-    return jsonify({'answer': answer})
+        return "Please ask a question about Abdulazeez."
 
-@app.route('/health', methods=['GET'])
+    cache_key = hashlib.md5(question.lower().encode("utf-8")).hexdigest()
+    if cache_key in RESPONSE_CACHE:
+        return RESPONSE_CACHE[cache_key]
+
+    start = time.time()
+    answer = answer_from_intent(question) or compose_retrieval_answer(question)
+    RESPONSE_CACHE[cache_key] = answer
+
+    if len(RESPONSE_CACHE) > 80:
+        for key in list(RESPONSE_CACHE.keys())[:20]:
+            del RESPONSE_CACHE[key]
+
+    print(f"Answered locally in {time.time() - start:.3f}s")
+    return answer
+
+
+@app.route("/", methods=["GET"])
+def home():
+    return f"Abdulazeez Chat API is running. Loaded {len(ALL_CHUNKS)} local knowledge chunks.", 200
+
+
+@app.route("/chat", methods=["POST"])
+def chat():
+    data = request.get_json(silent=True) or {}
+    question = data.get("message", "")
+
+    if not normalize_text(question):
+        return jsonify({"error": "No message provided"}), 400
+
+    return jsonify({"answer": answer_question(question)})
+
+
+@app.route("/contact", methods=["POST"])
+def contact():
+    payload = request.get_json(silent=True) if request.is_json else request.form
+
+    name = clean_contact_field(payload.get("name", ""), 120)
+    email = clean_contact_field(payload.get("email", ""), 180)
+    subject = clean_contact_field(payload.get("subject", ""), 180)
+    message = clean_contact_field(payload.get("message", ""), 4000)
+
+    if not all([name, email, subject, message]):
+        return "Please complete all required fields.", 400
+
+    if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email):
+        return "Please enter a valid email address.", 400
+
+    record = {
+        "received_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+        "name": name,
+        "email": email,
+        "subject": subject,
+        "message": message,
+    }
+    append_contact_message(record)
+    print(f"Contact form submission: {json.dumps(record, ensure_ascii=True)}")
+
+    return "OK", 200
+
+
+@app.route("/health", methods=["GET"])
 def health():
-    return jsonify({
-        'status': 'healthy',
-        'chunks_loaded': len(RESUME_CHUNKS),
-        'retrieval_cache_size': len(getattr(EMBEDDINGS, '_cache', {})),
-        'response_cache_size': len(response_cache)
-    })
+    return jsonify(
+        {
+            "status": "healthy",
+            "mode": "local-retrieval",
+            "knowledge_chunks": len(KNOWLEDGE_CHUNKS),
+            "resume_chunks": len(RESUME_CHUNKS),
+            "total_chunks": len(ALL_CHUNKS),
+            "retrieval_cache_size": len(RETRIEVER.cache),
+            "response_cache_size": len(RESPONSE_CACHE),
+        }
+    )
 
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5001))
-    app.run(host='0.0.0.0', port=port, debug=False)
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5001))
+    app.run(host="0.0.0.0", port=port, debug=False)

@@ -56,21 +56,9 @@
       <ul>
         <li><a href="index.html"><i class="bi bi-house navicon"></i>Home</a></li>
         <li><a href="index.html"><i class="bi bi-person navicon"></i> About</a></li>
-        <li><a href="index.html"><i class="bi bi-file-earmark-text navicon"></i> Resume</a></li>
         <li><a href="index.html"><i class="bi bi-images navicon"></i> Portfolio</a></li>
-        <li class="dropdown"><a href="#"><i class="bi bi-menu-button navicon"></i> <span>Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-          <ul>
-            <li><a href="#">Dropdown 1</a></li>
-            <li class="dropdown"><a href="#"><span>Deep Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-              <ul>
-                <li><a href="#">Deep Dropdown 1</a></li>
-\
-              </ul>
-            </li>
-            <li><a href="#">Dropdown 2</a></li>
-          </ul>
-        </li>
-        <li><a href="#contact"><i class="bi bi-envelope navicon"></i> Contact</a></li>
+        <li><a href="resume.html"><i class="bi bi-file-earmark-person navicon"></i> Resume</a></li>
+        <li><a href="index.html#contact"><i class="bi bi-envelope navicon"></i> Contact</a></li>
       </ul>
     </nav>
 
@@ -81,11 +69,11 @@
     <!-- Page Title -->
     <div class="page-title dark-background">
       <div class="container d-lg-flex justify-content-between align-items-center">
-        <h1 class="mb-2 mb-lg-0">Portfolio Details</h1>
+        <h1 class="mb-2 mb-lg-0" id="detail-page-title">Portfolio Details</h1>
         <nav class="breadcrumbs">
           <ol>
             <li><a href="index.html">Home</a></li>
-            <li class="current">Portfolio Details</li>
+            <li class="current" id="detail-breadcrumb">Portfolio Details</li>
           </ol>
         </nav>
       </div>
@@ -96,69 +84,31 @@
 
       <div class="container" data-aos="fade-up" data-aos-delay="100">
 
-        <div class="row gy-4">
-
-          <div class="col-lg-8">
-            <!-- Standalone Project Cards -->
-            <div class="project-card" style="margin-bottom: 40px; padding: 24px; border-radius: 12px; background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,0.04);">
-              <img src="assets/img/portfolio/Dashboard 2.png" alt="Data Analysis Dashboard" style="width:100%; border-radius: 8px; margin-bottom: 16px;">
-              <h3>Data Analysis: SuperStore Regional Dashboard</h3>
-              <p>The regional dashboard provides a visual summary of Superstore sales performance across different regions for the year 2017. It highlights key KPIs such as total sales and profit, along with year-over-year (YoY) changes to track growth. The dashboard also features a breakdown of sub-categories, identifying those with the highest sales in each region, enabling quick insights into top-performing products and areas for strategic focus.</p>
-              <div style="margin-top: 10px;">
-                <a href="https://public.tableau.com/app/profile/abdulazeez.adedayo/viz/SuperStoreRegionalDashboard/Dashboard2" target="_blank" title="View on Tableau" style="margin-right: 12px;"><i class="bi bi-link-45deg"></i></a>
-                <a href="https://medium.com/@abdulazeezanalytics/superstore-dashboard-analysis-article" target="_blank" title="Medium Article" style="margin-right: 12px;"><i class="bi bi-medium"></i></a>
-                <a href="https://github.com/AbdulazeezAde/superstore-dashboard" target="_blank" title="GitHub Repo"><i class="bi bi-github"></i></a>
-              </div>
+        <div class="portfolio-detail-layout">
+          <article class="portfolio-detail-main">
+            <img id="detail-image" src="assets/img/portfolio/Dashboard 2.png" alt="Portfolio project preview">
+            <div class="portfolio-description" data-aos="fade-up" data-aos-delay="200">
+              <span id="detail-category" class="project-kicker">Data Analytics</span>
+              <h2 id="detail-title">SuperStore Regional Dashboard</h2>
+              <p id="detail-summary"></p>
+              <div id="detail-sections" class="detail-sections"></div>
             </div>
+          </article>
 
-            <div class="project-card" style="margin-bottom: 40px; padding: 24px; border-radius: 12px; background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,0.04);">
-              <img src="assets/img/portfolio/product-1.jpg" alt="ML Project" style="width:100%; border-radius: 8px; margin-bottom: 16px;">
-              <h3>Machine Learning: Product Recommendation System</h3>
-              <p>This project implements a collaborative filtering-based recommendation system for e-commerce products. It leverages user purchase history and product features to suggest relevant products, improving user engagement and sales conversion rates. The model is built using Python and scikit-learn, and results are visualized with interactive dashboards.</p>
-              <div style="margin-top: 10px;">
-                <a href="https://medium.com/@abdulazeezanalytics/product-recommendation-system" target="_blank" title="Medium Article" style="margin-right: 12px;"><i class="bi bi-medium"></i></a>
-                <a href="https://github.com/AbdulazeezAde/product-recommendation-system" target="_blank" title="GitHub Repo"><i class="bi bi-github"></i></a>
-              </div>
-            </div>
-
-            <div class="project-card" style="margin-bottom: 40px; padding: 24px; border-radius: 12px; background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,0.04);">
-              <img src="assets/img/portfolio/branding-1.jpg" alt="Data Science Project" style="width:100%; border-radius: 8px; margin-bottom: 16px;">
-              <h3>Data Science: Customer Segmentation</h3>
-              <p>This project applies unsupervised learning (K-means clustering) to segment customers based on purchasing behavior and demographics. The insights help businesses tailor marketing strategies and improve customer retention. The project includes data preprocessing, feature engineering, and visualization of clusters.</p>
-              <div style="margin-top: 10px;">
-                <a href="https://medium.com/@abdulazeezanalytics/customer-segmentation-data-science" target="_blank" title="Medium Article" style="margin-right: 12px;"><i class="bi bi-medium"></i></a>
-                <a href="https://github.com/AbdulazeezAde/customer-segmentation" target="_blank" title="GitHub Repo"><i class="bi bi-github"></i></a>
-              </div>
-            </div>
-
-            <div class="project-card" style="margin-bottom: 40px; padding: 24px; border-radius: 12px; background: #fff; box-shadow: 0 2px 12px rgba(0,0,0,0.04);">
-              <img src="assets/img/portfolio/chatbot.png" alt="AI Engineering Project" style="width:100%; border-radius: 8px; margin-bottom: 16px;">
-              <h3>AI Engineering: Intelligent Chatbot</h3>
-              <p>This AI-powered chatbot leverages NLP and deep learning to provide instant support and information to users. Built with Python and TensorFlow, it can answer FAQs, handle customer queries, and integrate with business systems. The project demonstrates end-to-end deployment of AI models in production environments.</p>
-              <div style="margin-top: 10px;">
-                <a href="https://medium.com/@abdulazeezanalytics/intelligent-chatbot-ai-engineering" target="_blank" title="Medium Article" style="margin-right: 12px;"><i class="bi bi-medium"></i></a>
-                <a href="https://github.com/AbdulazeezAde/intelligent-chatbot" target="_blank" title="GitHub Repo"><i class="bi bi-github"></i></a>
-              </div>
-            </div>
-          </div>
-
-          <div class="col-lg-4">
-            <div class="portfolio-info" data-aos="fade-up" data-aos-delay="200">
+          <aside class="portfolio-detail-sidebar">
+            <div class="portfolio-info" data-aos="fade-up" data-aos-delay="250">
               <h3>Project information</h3>
-              <ul>
-                <li><strong>Category</strong>: Data Analytics</li>
-                <li><strong>Project date</strong>: 25 December, 2022</li>
-                <li><strong>Project URL</strong>: <a href="https://public.tableau.com/app/profile/abdulazeez.adedayo/viz/SuperStoreRegionalDashboard/Dashboard2">public.tableau.com</a></li>
-              </ul>
+              <ul id="detail-info"></ul>
             </div>
-            <div class="portfolio-description" data-aos="fade-up" data-aos-delay="300">
-              <h2>SuperStore Regional Dashboard</h2>
-              <p>
-              The regional dashboard provides a visual summary of Superstore sales performance across different regions for the year 2017. It highlights key KPIs such as total sales and profit, along with year-over-year (YoY) changes to track growth. The dashboard also features a breakdown of sub-categories, identifying those with the highest sales in each region, enabling quick insights into top-performing products and areas for strategic focus.
-              </p>
+            <div class="portfolio-info" data-aos="fade-up" data-aos-delay="300">
+              <h3>Project links</h3>
+              <div id="detail-links" class="detail-links"></div>
             </div>
-          </div>
-
+            <div class="portfolio-info" data-aos="fade-up" data-aos-delay="350">
+              <h3>Related visual source</h3>
+              <p id="detail-image-source"></p>
+            </div>
+          </aside>
         </div>
 
       </div>
@@ -166,6 +116,184 @@
     </section><!-- /Portfolio Details Section -->
 
   </main>
+
+  <script>
+    const projectDetails = {
+      "enterprise-dtwin-ai": {
+        title: "Enterprise Digital Twin AI",
+        category: "AI Engineering",
+        image: "assets/img/portfolio/app-3.jpg",
+        fallbackImage: "assets/img/portfolio/app-3.jpg",
+        imageAlt: "Enterprise Digital Twin AI project preview",
+        imageSource: "Private MangoZest Enterprises work. The page uses a local portfolio visual instead of a repository image because the codebase is not public.",
+        summary: "Enterprise Digital Twin AI is private MangoZest Enterprises work focused on creating a digital twin clone that can answer questions like a specific person or role. The system is designed to preserve tone, behaviour, communication style, and company context while keeping access and data boundaries controlled by the backend.",
+        info: {
+          "Category": "AI Engineering",
+          "Client": "MangoZest Enterprises",
+          "Focus": "Digital twin Q&A, tone, behaviour, and company context",
+          "Stack": "FastAPI, RAG, authentication, retrieval workflows",
+          "Code": "Private repository"
+        },
+        sections: [
+          ["Problem", "A normal chatbot can answer from documents, but it does not naturally behave like the person or business role it represents. The goal is to build a controlled digital twin that can respond with the right knowledge, tone, behaviour, and communication pattern."],
+          ["Approach", "The system combines company context retrieval, profile/persona grounding, authentication, and backend-owned access checks. The answer flow is designed to use the retrieved context while shaping responses around the expected tone and behavioural style of the twin."],
+          ["What it demonstrates", "This work demonstrates practical RAG design, persona-aware response generation, backend security boundaries, and the engineering needed to turn a general assistant into a business-specific digital twin experience."]
+        ],
+        links: []
+      },
+      "lassa-fever": {
+        title: "Lassa Fever Outbreak Prediction System",
+        category: "Public Health ML",
+        image: "https://opengraph.githubassets.com/abdulazeez-portfolio/AbdulazeezAde/Lassa-Fever-Project",
+        fallbackImage: "assets/img/portfolio/books-2.jpg",
+        imageAlt: "Lassa Fever Project repository preview",
+        imageSource: "Matched against online Lassa fever outbreak map examples and the public GitHub repository preview.",
+        summary: "A public-health forecasting platform for Nigerian Lassa fever surveillance. It combines CSV-based case data loading, risk summaries, forecast endpoints, model metrics, and a Streamlit dashboard for exploring outbreak patterns.",
+        info: {
+          "Category": "Machine Learning",
+          "Focus": "Disease surveillance and forecasting",
+          "Stack": "FastAPI, Streamlit, Python, CSV pipelines",
+          "Data boundary": "CSV-based case and environmental features"
+        },
+        sections: [
+          ["Problem", "Disease surveillance teams need simple ways to inspect case trends, state-level risk, and forecast outputs without depending on heavy infrastructure."],
+          ["Approach", "The backend exposes health, case, summary, upload, forecast, risk, and metrics endpoints. A Streamlit dashboard consumes the same data boundary so uploaded CSV files can refresh the project without rewriting the application."],
+          ["What it demonstrates", "The project shows public-health data modeling, API serving, dashboard delivery, data validation, and a deployment-friendly approach to forecasting workflows."]
+        ],
+        links: [
+          ["GitHub", "https://github.com/AbdulazeezAde/Lassa-Fever-Project"]
+        ]
+      },
+      "air-quality": {
+        title: "Air Quality Respiratory Risk Prediction",
+        category: "Machine Learning",
+        image: "https://opengraph.githubassets.com/abdulazeez-portfolio/AbdulazeezAde/Air-Quality-Project",
+        fallbackImage: "assets/img/portfolio/app-1.jpg",
+        imageAlt: "Air Quality Project repository preview",
+        imageSource: "Matched against online air-quality dashboard examples and the public GitHub repository preview.",
+        summary: "An ML pipeline and API for predicting respiratory disease risk from pollution, weather, seasonal, and lag-based features. The project includes preprocessing, model comparison, saved artifacts, and a frontend/API flow for location-based prediction.",
+        info: {
+          "Category": "Machine Learning",
+          "Focus": "Air quality and respiratory risk",
+          "Stack": "Python, XGBoost, scikit-learn, FastAPI, React",
+          "Models": "Logistic Regression, Random Forest, XGBoost"
+        },
+        sections: [
+          ["Problem", "Air quality and weather signals can support early respiratory risk awareness, but they need to be cleaned, modeled, and served in a way that users can understand."],
+          ["Approach", "The pipeline collects and prepares pollutant and weather features, applies preprocessing and balancing, compares multiple models, saves reusable artifacts, and exposes inference through a FastAPI service."],
+          ["What it demonstrates", "This work shows end-to-end ML delivery: data preparation, model evaluation, API inference, frontend integration, and clear communication of risk classes."]
+        ],
+        links: [
+          ["GitHub", "https://github.com/AbdulazeezAde/Air-Quality-Project"]
+        ]
+      },
+      "identity-verification": {
+        title: "Identity Verification Engine",
+        category: "Backend Systems",
+        image: "assets/img/portfolio/product-2.jpg",
+        fallbackImage: "assets/img/portfolio/product-2.jpg",
+        imageAlt: "Identity Verification Engine project preview",
+        imageSource: "Private MangoZest Enterprises work. The page uses a local portfolio visual instead of a repository image because the codebase is not public.",
+        summary: "Identity Verification Engine is private MangoZest Enterprises work for verifying users through document OCR, face extraction, liveness detection, and real-time frontend messaging. The system extracts details from an ID, compares the ID face with the user's live stream face, and sends verification progress back to the frontend through WebSockets.",
+        info: {
+          "Category": "Backend Systems",
+          "Client": "MangoZest Enterprises",
+          "Focus": "OCR, face verification, liveness detection, and real-time status updates",
+          "Stack": "FastAPI, OCR, face matching, liveness detection, WebSockets",
+          "Code": "Private repository"
+        },
+        sections: [
+          ["Problem", "Manual identity checks are slow and inconsistent. The system needs to read identity documents, confirm that the document belongs to the person in front of the camera, and keep the frontend informed while verification is happening."],
+          ["Approach", "The engine uses OCR to extract structured identity details from uploaded documents, extracts the face from the ID, runs liveness checks on the live camera stream, compares the ID face against the live face, and sends verification status messages to the frontend over WebSockets."],
+          ["What it demonstrates", "This work demonstrates document AI, OCR extraction, biometric verification flow design, liveness checks, real-time backend-to-frontend communication, and practical API engineering for identity products."]
+        ],
+        links: []
+      },
+      "id-extract": {
+        title: "ID Extract",
+        category: "Computer Vision",
+        image: "https://opengraph.githubassets.com/abdulazeez-portfolio/AbdulazeezAde/id-extract",
+        fallbackImage: "assets/img/portfolio/product-2.jpg",
+        imageAlt: "ID Extract repository preview",
+        imageSource: "Matched against online document OCR and MRZ extraction examples while keeping the primary visual tied to the GitHub project.",
+        summary: "A document extraction engine for IDs and passports, focused on OCR reliability, MRZ recovery, model manifest checks, ONNX runtime work, and packaging validation before release.",
+        info: {
+          "Category": "Computer Vision",
+          "Focus": "ID/passport OCR extraction",
+          "Stack": "PaddleOCR, ONNX, Python packaging",
+          "Status": "To be pushed"
+        },
+        sections: [
+          ["Problem", "ID and passport extraction must handle noisy document images, inconsistent OCR output, and fragile model packaging boundaries."],
+          ["Approach", "The implementation emphasizes local model manifest integrity, MRZ-first recovery paths, semantic encoder export/runtime checks, and packaging verification so the extraction pipeline can be shipped reliably."],
+          ["What it demonstrates", "This project demonstrates OCR pipeline engineering, model artifact management, runtime validation, and practical hardening for document AI systems."]
+        ],
+        links: [
+          ["GitHub", "https://github.com/AbdulazeezAde/id-extract"]
+        ]
+      },
+      "superstore": {
+        title: "SuperStore Regional Dashboard",
+        category: "Data Analytics",
+        image: "assets/img/portfolio/Dashboard 2.png",
+        fallbackImage: "assets/img/portfolio/Dashboard 2.png",
+        imageAlt: "SuperStore Regional Dashboard screenshot",
+        imageSource: "Matched against online Tableau SuperStore dashboard examples; this page uses the actual local dashboard screenshot already present in the portfolio.",
+        summary: "A Tableau dashboard for exploring regional SuperStore sales performance, profit movement, year-over-year changes, and top sub-category performance.",
+        info: {
+          "Category": "Business Intelligence",
+          "Focus": "Sales, profit, and regional performance",
+          "Stack": "Tableau, dashboard design, data storytelling",
+          "Output": "Interactive dashboard"
+        },
+        sections: [
+          ["Problem", "Regional sales performance needs to be easy to scan across KPIs, product sub-categories, and year-over-year movement."],
+          ["Approach", "The dashboard organizes total sales, profit, YoY changes, and sub-category performance into a visual flow that supports quick comparison and business review."],
+          ["What it demonstrates", "This project demonstrates BI storytelling, KPI design, Tableau layout decisions, and practical data communication for non-technical stakeholders."]
+        ],
+        links: [
+          ["Live Dashboard", "https://public.tableau.com/app/profile/abdulazeez.adedayo/viz/SuperStoreRegionalDashboard/Dashboard2"],
+          ["GitHub", "https://github.com/AbdulazeezAde/superstore-dashboard"]
+        ]
+      }
+    };
+
+    const params = new URLSearchParams(window.location.search);
+    const slug = params.get("project") || "superstore";
+    const project = projectDetails[slug] || projectDetails.superstore;
+
+    document.title = `${project.title} - Abdulazeez Adedayo`;
+    document.getElementById("detail-page-title").textContent = project.title;
+    document.getElementById("detail-breadcrumb").textContent = project.title;
+    const detailImage = document.getElementById("detail-image");
+    detailImage.onerror = () => {
+      detailImage.onerror = null;
+      detailImage.src = project.fallbackImage;
+    };
+    detailImage.src = project.image;
+    detailImage.alt = project.imageAlt;
+    document.getElementById("detail-category").textContent = project.category;
+    document.getElementById("detail-title").textContent = project.title;
+    document.getElementById("detail-summary").textContent = project.summary;
+    document.getElementById("detail-image-source").textContent = project.imageSource;
+
+    const info = document.getElementById("detail-info");
+    info.innerHTML = Object.entries(project.info).map(([label, value]) => (
+      `<li><strong>${label}</strong>: ${value}</li>`
+    )).join("");
+
+    const sections = document.getElementById("detail-sections");
+    sections.innerHTML = project.sections.map(([heading, body]) => (
+      `<section><h3>${heading}</h3><p>${body}</p></section>`
+    )).join("");
+
+    const links = document.getElementById("detail-links");
+    links.innerHTML = project.links.length
+      ? project.links.map(([label, href]) => (
+        `<a href="${href}" target="_blank" rel="noopener"><i class="bi bi-box-arrow-up-right"></i> ${label}</a>`
+      )).join("")
+      : `<span class="project-note">Private client work. Public code link is not available.</span>`;
+  </script>
 
   <footer id="footer" class="footer position-relative light-background">
 
