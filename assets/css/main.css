@@ -694,29 +694,14 @@ section,
   border: 1px solid color-mix(in srgb, var(--default-color), transparent 88%);
   border-radius: 8px;
   box-shadow: 0 18px 46px rgba(0, 0, 0, 0.08);
-  display: grid;
-  gap: 34px;
-  grid-template-columns: minmax(260px, 0.78fr) minmax(0, 1.62fr);
-  overflow: hidden;
-  padding: 28px;
-}
-
-.about-photo {
-  background: #eef3f6;
-  border-radius: 8px;
-  min-height: 100%;
-  overflow: hidden;
-}
-
-.about-photo img {
-  display: block;
-  height: 100%;
-  object-fit: cover;
+  margin: 0 auto;
+  max-width: 1040px;
+  padding: 34px;
   width: 100%;
 }
 
 .about-content {
-  padding: 8px 8px 8px 0;
+  padding: 0;
 }
 
 .about-kicker {
@@ -822,22 +807,13 @@ section,
 
 @media (max-width: 1199px) {
   .about-panel {
-    grid-template-columns: 1fr;
-  }
-
-  .about-photo {
-    max-height: 520px;
+    max-width: 100%;
   }
 }
 
 @media (max-width: 767px) {
   .about-panel {
-    gap: 22px;
-    padding: 18px;
-  }
-
-  .about-content {
-    padding: 0;
+    padding: 22px;
   }
 
   .about-content h3 {
