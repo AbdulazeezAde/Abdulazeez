@@ -1,2 +1,4 @@
-The contact form is handled by the Flask backend at /contact.
-It accepts name, email, subject, and message fields and returns OK for the frontend validation script.
+The live contact form posts to Formspree:
+https://formspree.io/f/xvzezvby
+
+The frontend validation script accepts Formspree's successful response and shows the existing sent-message state.

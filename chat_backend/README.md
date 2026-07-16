@@ -17,9 +17,9 @@
 - POST `/chat` with JSON `{ "message": "your question" }`
 - Returns `{ "answer": "..." }`
 - POST `/contact` with form fields or JSON containing `name`, `email`, `subject`, and `message`
-- Returns `OK` for successful contact submissions
+- Returns `OK` for successful contact submissions. This route is a fallback; the live portfolio contact form currently posts directly to Formspree.
 
 ## Note
 - This backend does not require an LLM API key. It uses local structured knowledge plus TF-IDF retrieval, which is suitable for free Render hosting.
 - Update `knowledge.json` when portfolio details change.
-- Contact submissions are printed to server logs and appended to `contact_messages.jsonl`. On free Render, use an external mail/form service later if you need durable delivery outside the app instance.
+- The live portfolio contact form uses Formspree for email delivery. The backend `/contact` route only logs/appends submissions if you point a form to it again later.

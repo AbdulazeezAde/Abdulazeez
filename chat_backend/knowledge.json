@@ -18,7 +18,7 @@
       "company": "Data Quotient",
       "period": "Dec 2024 - Present",
       "highlights": [
-        "Built Retrieval-Augmented Generation workflows for Leveller to improve contextual accuracy in AI outputs.",
+        "Built Retrieval-Augmented Generation workflows to improve contextual accuracy in AI outputs.",
         "Designed 100+ JSON schemas for structured storage and better data consistency.",
         "Automated data collection pipelines and reduced manual effort by about 50%.",
         "Stored processed data in Amazon S3 and built workflows for analysis, prediction, and visualization."

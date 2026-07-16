@@ -67,13 +67,17 @@
   <main class="main">
 
     <!-- home Section -->
-    <section id="home" class="hero section dark-background">
+    <section id="home" class="hero section">
 
-      <img  src="assets/img/myimg.jpg" alt="" data-aos="fade-in" class="img-head">
-
-      <div class="container name" data-aos="fade-up" data-aos-delay="100">
-        <h2>Abdulazeez Adedayo</h2>
-        <p>I'm a <span class="typed" data-typed-items="Data Analyst, ML Engineer, BI Developer">Data Professional</span><span class="typed-cursor typed-cursor--blink" aria-hidden="true"></span><span class="typed-cursor typed-cursor--blink" aria-hidden="true"></span></p>
+      <div class="container hero-inner" data-aos="fade-up" data-aos-delay="100">
+        <div class="hero-photo">
+          <img src="assets/img/myimg.jpg" alt="Abdulazeez Adedayo profile photo" loading="lazy">
+        </div>
+        <div class="hero-copy">
+          <span class="hero-kicker">Data Scientist & ML Engineer</span>
+          <h2>Abdulazeez Adedayo</h2>
+          <p>I'm a <span class="typed" data-typed-items="Data Professional, ML Engineer, BI Developer, AI Engineer">Data Professional</span></p>
+        </div>
       </div>
 
     </section><!-- /Hero Section -->
@@ -437,7 +441,8 @@
             <div class="collab-form-wrap" style="background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); padding: 32px 24px; margin-top: 12px;">
               <h3 style="font-weight: 700; margin-bottom: 10px; color: #007bff;">Let's Collaborate!</h3>
               <p style="margin-bottom: 18px; color: #444;">Interested in working together, networking, or have an opportunity? Fill out the form below and I'll get back to you soon.</p>
-              <form action="https://abdulazeez-1.onrender.com/contact" method="post" class="php-email-form" style="margin-top: 10px;">
+              <form action="https://formspree.io/f/xvzezvby" method="post" class="php-email-form" style="margin-top: 10px;">
+                <input type="hidden" name="_subject" value="New portfolio contact message">
                 <div class="row gy-3">
                   <div class="col-md-6">
                     <input type="text" name="name" class="form-control" placeholder="Your Name" required>

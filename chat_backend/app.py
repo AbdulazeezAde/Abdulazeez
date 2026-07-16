@@ -213,6 +213,33 @@ def format_list(items):
     return "\n".join(f"- {item}" for item in items if item)
 
 
+def format_profile_answer():
+    profile = KNOWLEDGE.get("profile", {})
+    roles = profile.get("roles", "Data and AI professional")
+    summary = profile.get("summary", "")
+    location = profile.get("location", "")
+
+    answer = f"Abdulazeez Adedayo is a {roles}"
+    if location:
+        answer += f" based in {location}"
+    answer += "."
+    if summary:
+        answer += f" {summary}"
+
+    answer = answer.replace("Data Scientist, Machine Learning Engineer, AI Researcher", "Data Scientist, Machine Learning Engineer, and AI Researcher")
+
+    return answer
+
+
+def format_skill_group_name(group):
+    labels = {
+        "machine learning and ai": "Machine Learning & AI",
+        "data and analytics": "Data & Analytics",
+        "backend and deployment": "Backend & Deployment",
+    }
+    return labels.get(group, group.title())
+
+
 def format_project(project):
     lines = [
         f"{project['name']} is a {project.get('category', 'portfolio')} project.",
@@ -232,6 +259,12 @@ def answer_from_intent(question):
 
     if is_greeting(query):
         return "Hello, what would you like to know about Abdulazeez?"
+
+    if (
+        contains_any(query, ["who is", "who's", "about abdulazeez", "tell me about", "introduce", "profile", "bio"])
+        or query in {"abdulazeez", "who is abdulazeez", "who is abdulazeez?", "about"}
+    ):
+        return format_profile_answer()
 
     if contains_any(query, ["contact", "email", "phone", "linkedin", "github", "reach", "hire"]):
         contact = KNOWLEDGE.get("contact", {})
@@ -255,16 +288,20 @@ def answer_from_intent(question):
 
     if contains_any(query, ["project", "portfolio", "built", "work on", "worked on"]):
         projects = KNOWLEDGE.get("projects", [])
-        return "Selected projects:\n" + format_list(
-            [f"{p['name']}: {p.get('summary', '')}" for p in projects]
+        selected = projects[:4]
+        answer = "Some selected projects include:\n" + format_list(
+            [f"{p['name']} ({p.get('category', 'Project')})" for p in selected]
         )
+        if len(projects) > len(selected):
+            answer += "\n\nYou can ask about any project by name for more detail."
+        return answer
 
-    if contains_any(query, ["skill", "tools", "stack", "technology", "technologies"]):
+    if contains_any(query, ["skill", "tools", "stack", "technology", "technologies", "database", "databases"]):
         skills = KNOWLEDGE.get("skills", {})
         if not skills:
             return None
-        return "Abdulazeez works with:\n" + "\n".join(
-            f"- {group.title()}: {', '.join(values)}" for group, values in skills.items()
+        return "Abdulazeez works mainly across:\n" + "\n".join(
+            f"- {format_skill_group_name(group)}: {', '.join(values[:6])}" for group, values in skills.items()
         )
 
     if contains_any(query, ["experience", "job", "work history", "employment", "role"]):
@@ -301,18 +338,20 @@ def answer_from_intent(question):
 
 
 def compose_retrieval_answer(question):
-    docs = RETRIEVER.search(question, k=4)
+    docs = RETRIEVER.search(question, k=3, min_score=0.12)
     if not docs:
         return "I could not find that information about Abdulazeez. What else would you like to know?"
 
     snippets = []
-    for doc in docs[:3]:
+    for doc in docs[:2]:
         content = doc["content"]
-        if len(content) > 520:
-            content = content[:517].rstrip() + "..."
+        content = re.sub(r"^#+\s*", "", content)
+        content = re.sub(r"^(Profile|Contact|Experience|Education|Skills|Project|Research|Community|Links)\s*:\s*", "", content)
+        if len(content) > 240:
+            content = content[:237].rstrip() + "..."
         snippets.append(content)
 
-    return "Here is what I found about Abdulazeez:\n" + format_list(snippets)
+    return "I found these relevant points:\n" + format_list(snippets)
 
 
 def answer_question(question):

@@ -16,7 +16,7 @@ Google Data Analytics Professional Certificate (Coursera, 2022)
 #Work Experience
 Data Scientist – Data Quotient (Dec 2024 – Present, Remote/Onsite)
 Designed and implemented over 100+ JSON schemas for structured data storage and improved data consistency.
-Built and deployed Retrieval-Augmented Generation (RAG) workflows for Leveller, enhancing response accuracy and contextual relevance.
+Built and deployed Retrieval-Augmented Generation (RAG) workflows, enhancing response accuracy and contextual relevance.
 Automated data collection, reducing manual effort by 50% with a scalable data extraction pipeline.
 Stored processed data securely in Amazon S3 for efficient access and scalability.
 Developed and optimized machine learning models to analyze, predict, and visualize data insights.
@@ -29,7 +29,7 @@ Built real-time dashboards and reports that improved decision-making and boosted
 
 Research & Projects
 1. Yoruba Machine Translation: Improving robustness for Egba, Akoko, and Offa dialects using MENYO-20k and YorùLect.
-2. Leveller RAG Workflow: Built RAG pipeline using LangChain, PineCone, and OpenAI to enhance contextual accuracy.
+2. RAG Workflow: Built RAG pipeline using LangChain, PineCone, and OpenAI to enhance contextual accuracy.
 3. Speech datasets for English–Yoruba MT with focus on Yoruba accents.
 4. Food recommendation system using African food datasets.
 5. DeepEyeNet: Deep learning model for eye disease classification.
