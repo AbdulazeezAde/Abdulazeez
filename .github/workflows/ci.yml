@@ -56,33 +56,18 @@ jobs:
           PY
 
   deploy:
-    name: Deploy to Vercel
+    name: Deploy to Render
     runs-on: ubuntu-latest
     needs: ci
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    timeout-minutes: 15
+    timeout-minutes: 5
     env:
-      VERCEL_ORG_ID: ${{ vars.VERCEL_ORG_ID }}
-      VERCEL_PROJECT_ID: ${{ vars.VERCEL_PROJECT_ID }}
-      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
     steps:
-      - name: Check out repository
-        if: env.VERCEL_ORG_ID != '' && env.VERCEL_PROJECT_ID != '' && env.VERCEL_TOKEN != ''
-        uses: actions/checkout@v4
+      - name: Trigger Render deploy
+        if: env.RENDER_DEPLOY_HOOK_URL != ''
+        run: curl --fail --silent --show-error --request POST "$RENDER_DEPLOY_HOOK_URL"
 
-      - name: Set up Node.js
-        if: env.VERCEL_ORG_ID != '' && env.VERCEL_PROJECT_ID != '' && env.VERCEL_TOKEN != ''
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: Build and deploy production
-        if: env.VERCEL_ORG_ID != '' && env.VERCEL_PROJECT_ID != '' && env.VERCEL_TOKEN != ''
-        run: |
-          npx --yes vercel@latest pull --yes --environment=production --token="$VERCEL_TOKEN"
-          npx --yes vercel@latest build --prod --token="$VERCEL_TOKEN"
-          npx --yes vercel@latest deploy --prebuilt --prod --token="$VERCEL_TOKEN"
-
-      - name: Skip deployment when Vercel credentials are not configured
-        if: env.VERCEL_ORG_ID == '' || env.VERCEL_PROJECT_ID == '' || env.VERCEL_TOKEN == ''
-        run: echo "Skipping deployment. Configure VERCEL_ORG_ID and VERCEL_PROJECT_ID repository variables, and the VERCEL_TOKEN secret to enable it."
+      - name: Skip deployment when the Render deploy hook is not configured
+        if: env.RENDER_DEPLOY_HOOK_URL == ''
+        run: echo "Skipping deployment. Add the Render deploy hook URL as the RENDER_DEPLOY_HOOK_URL repository secret."
