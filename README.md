@@ -46,9 +46,8 @@ The backend uses `chat_backend/Resume.txt` and `chat_backend/knowledge.json`; up
 
 The GitHub Actions workflow at `.github/workflows/ci.yml` runs on pushes, pull requests targeting `main`, and manual dispatch. It installs the backend dependencies, checks Python syntax and knowledge JSON, and smoke-tests the health and chat endpoints.
 
-After CI succeeds, pushes to `main` deploy to Vercel if the following GitHub repository settings are configured:
+After CI succeeds, pushes to `main` trigger a Render deployment if the GitHub repository secret below is configured:
 
-- Variables: `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID`
-- Secret: `VERCEL_TOKEN`
+- Secret: `RENDER_DEPLOY_HOOK_URL` — the deploy hook URL for the chat backend web service in Render. Create a deploy hook in the service's Render dashboard and add its URL under the repository's **Settings → Secrets and variables → Actions**.
 
-Without these settings, CI still runs and the deployment job reports that deployment was skipped. The Vercel project configuration is in `chat_backend/vercel.json`.
+Without this secret, CI still runs and the deployment job reports that deployment was skipped. The workflow triggers the Render deployment after successful CI; Render performs the actual build and deployment.
