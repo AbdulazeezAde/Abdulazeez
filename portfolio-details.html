@@ -190,8 +190,8 @@
       "identity-verification": {
         title: "Identity Verification Engine",
         category: "Backend Systems",
-        image: "assets/img/portfolio/details/identity-verification-engine.png",
-        fallbackImage: "assets/img/portfolio/details/identity-verification-engine.png",
+        image: "assets/img/portfolio/details/sample_keystone_image.png",
+        fallbackImage: "assets/img/portfolio/details/sample_keystone_image.png",
         imageAlt: "Identity Verification Engine project preview",
         imageSource: "Custom local visual representing the private MangoZest OCR, liveness, face matching, and WebSocket verification workflow.",
         summary: "Identity Verification Engine is private MangoZest Enterprises work for verifying users through document OCR, face extraction, liveness detection, and real-time frontend messaging. The system extracts details from an ID, compares the ID face with the user's live stream face, and sends verification progress back to the frontend through WebSockets.",
@@ -207,7 +207,7 @@
           ["Approach", "The engine uses OCR to extract structured identity details from uploaded documents, extracts the face from the ID, runs liveness checks on the live camera stream, compares the ID face against the live face, and sends verification status messages to the frontend over WebSockets."],
           ["What it demonstrates", "This work demonstrates document AI, OCR extraction, biometric verification flow design, liveness checks, real-time backend-to-frontend communication, and practical API engineering for identity products."]
         ],
-        links: []
+        links: [["Website", "https://www.keystone.mangozestlabs.com/"]]
       },
       "id-extract": {
         title: "ID Extract",
@@ -216,20 +216,21 @@
         fallbackImage: "assets/img/portfolio/details/id-extract-engine.png",
         imageAlt: "ID Extract OCR and MRZ extraction interface preview",
         imageSource: "Custom local visual representing document OCR, MRZ extraction, structured field parsing, and runtime validation.",
-        summary: "A document extraction engine for IDs and passports, focused on OCR reliability, MRZ recovery, model manifest checks, ONNX runtime work, and packaging validation before release.",
+        summary: "A document extraction engine for IDs and passports, focused on OCR reliability, MRZ recovery, model manifest checks, ONNX runtime work, and packaging validation before release. face-liveness-check is a model-agnostic Python package for orchestrating face verification with active liveness challenges, passive anti-spoof scores, video-integrity checks, and embedding comparison. This project provides decision orchestration, not a guarantee that a person is live. Use a validated presentation-attack-detection (PAD) model, calibrate thresholds on representative data, and provide a safe fallback path for people who cannot complete a motion challenge.",
         info: {
           "Category": "Computer Vision",
           "Focus": "ID/passport OCR extraction",
           "Stack": "PaddleOCR, ONNX, Python packaging",
-          "Status": "To be pushed"
+          "Status": "In progress"
         },
         sections: [
           ["Problem", "ID and passport extraction must handle noisy document images, inconsistent OCR output, and fragile model packaging boundaries."],
           ["Approach", "The implementation emphasizes local model manifest integrity, MRZ-first recovery paths, semantic encoder export/runtime checks, and packaging verification so the extraction pipeline can be shipped reliably."],
+          ["Liveness check", "Generates a cryptographically shuffled challenge sequence: blink, turn left, turn right, or nod. Verifies that activity occurs in the requested order. Requires stable single-face tracking, acceptable lighting/quality, passive anti-spoof scores, and non-duplicated video frames. Compares normalized face embeddings with cosine similarity only after liveness succeeds. Optionally extracts a portrait and typed fields from a consented ID image before any live camera session begins. Leaves model selection to the application: use licensed ONNX detector, landmark, embedding, "],
           ["What it demonstrates", "This project demonstrates OCR pipeline engineering, model artifact management, runtime validation, and practical hardening for document AI systems."]
         ],
         links: [
-          ["GitHub", "https://github.com/AbdulazeezAde/id-extract"]
+          ["GitHub", "https://github.com/AbdulazeezAde/face-liveness-check"]
         ]
       },
       "superstore": {
